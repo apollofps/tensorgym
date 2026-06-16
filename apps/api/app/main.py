@@ -212,7 +212,7 @@ def _execute_and_feedback(challenge_id: str, code: str, *, include_hidden: bool,
     with session_scope() as s:
         progress.save_workspace(s, challenge_id, code)
         ws = progress.get_workspace(s, challenge_id)
-        hints_used = max(0, ws.hint_level + 1)
+        hints_used = max(0, (ws.hint_level if ws else -1) + 1)
         progress.record_attempt(s, challenge_id, kind, fb.status == "passed", hints_used, fb.summary)
 
         mastery_update: dict[str, float] = {}

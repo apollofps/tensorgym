@@ -402,6 +402,39 @@
   .CodeMirror-gutters { border-right: 1px solid var(--edge-dim); background: var(--bg); }
   .CodeMirror-linenumber { color: var(--subtle); padding: 0 8px 0 6px; }
 
+  /* ─── Tensor Visualizer ─── */
+  .viz-wrap {
+    position: relative; margin-top: 12px;
+    border: 1px solid var(--edge); border-radius: 8px;
+    background: var(--raised); overflow: hidden;
+    padding: 8px;
+  }
+  .viz-wrap canvas {
+    display: block; width: 100%; cursor: crosshair;
+    image-rendering: pixelated;
+  }
+  .viz-tooltip {
+    position: absolute; pointer-events: none;
+    background: var(--surface); border: 1px solid var(--edge);
+    border-radius: 6px; padding: 6px 10px; font-size: 11px;
+    color: var(--ink-h); white-space: nowrap; z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,.4);
+    line-height: 1.5;
+  }
+  .viz-tooltip b { font-weight: 700; }
+  .viz-note {
+    font-size: 10.5px; color: var(--subtle); text-align: center;
+    margin-top: 6px;
+  }
+  .viz-legend {
+    display: flex; align-items: center; gap: 4px;
+    margin-top: 6px; justify-content: center;
+  }
+  .viz-legend-bar {
+    width: 80px; height: 6px; border-radius: 3px;
+  }
+  .viz-legend span { font-size: 10px; color: var(--muted); }
+
   @media (max-width: 1100px) {
     .ws { grid-template-columns: 1fr; }
     .ws-left, .ws-right { border: none; }
@@ -540,6 +573,11 @@
       <div class="ws-r-section">
         <div class="ws-r-title">Tensor Inspector</div>
         <div id="inspector" style="color:var(--muted);font-size:12.5px">Run to inspect output.</div>
+        <div id="vizWrap" class="viz-wrap hidden">
+          <canvas id="vizCanvas"></canvas>
+          <div id="vizTooltip" class="viz-tooltip hidden"></div>
+          <div id="vizNote" class="viz-note"></div>
+        </div>
       </div>
       <div class="ws-r-section">
         <div class="ws-r-title">Next Action</div>
@@ -732,12 +770,212 @@ function renderFeedback(d){
 }
 
 function renderInspector(m){
+  $("vizWrap").classList.add("hidden");
   if(!m){ $("inspector").innerHTML='<span style="color:var(--muted)">—</span>'; return; }
   if(m.error){ $("inspector").innerHTML=`<span style="color:var(--red)">${m.error.type}: ${m.error.message}</span>`; return; }
   const rows=[["Shape",JSON.stringify(m.shape)],["Rank",m.rank],["Dtype",m.dtype],["Device",m.device],
     ["Requires Grad",m.requires_grad],["Grad Fn",m.grad_fn||"None"],["Contiguous",m.is_contiguous],
     ["Numel",m.numel],["Bytes",m.nbytes+" B"]];
   $("inspector").innerHTML=`<table class="insp-table">`+rows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join("")+`</table>`;
+  if(m.values != null && m.is_tensor) renderTensorViz(m);
+}
+
+/* ── 3D Isometric Tensor Visualizer ── */
+const VIZ = { cells: [], shape: [], values: null, flat: [], min: 0, max: 1, dtype: "" };
+
+function flattenValues(v, coords, out) {
+  if(Array.isArray(v)) { v.forEach((el, i) => flattenValues(el, [...coords, i], out)); }
+  else { out.push({ coords, val: v }); }
+}
+
+function colormap(t) {
+  const r1 = [59,130,246], mid = [248,250,252], r2 = [239,68,68];
+  if(t <= 0.5) {
+    const s = t * 2;
+    return r1.map((c, i) => Math.round(c + (mid[i] - c) * s));
+  }
+  const s = (t - 0.5) * 2;
+  return mid.map((c, i) => Math.round(c + (r2[i] - c) * s));
+}
+
+function renderTensorViz(m) {
+  const shape = m.shape;
+  if(!shape || shape.length === 0 || shape.length > 4) return;
+
+  const wrap = $("vizWrap");
+  const canvas = $("vizCanvas");
+  const ctx = canvas.getContext("2d");
+
+  VIZ.shape = shape;
+  VIZ.values = m.values;
+  VIZ.dtype = m.dtype;
+  VIZ.cells = [];
+  VIZ.flat = [];
+  flattenValues(m.values, [], VIZ.flat);
+
+  const nums = VIZ.flat.map(c => c.val);
+  VIZ.min = Math.min(...nums);
+  VIZ.max = Math.max(...nums);
+  if(VIZ.min === VIZ.max) { VIZ.max = VIZ.min + 1; }
+
+  const rank = shape.length;
+  let rows, cols, slices;
+  if(rank === 1)      { slices = 1; rows = 1;        cols = shape[0]; }
+  else if(rank === 2) { slices = 1; rows = shape[0];  cols = shape[1]; }
+  else if(rank === 3) { slices = shape[0]; rows = shape[1]; cols = shape[2]; }
+  else                { slices = shape[0] * shape[1]; rows = shape[2]; cols = shape[3]; }
+
+  const BW = 14, BH = 8, BD = 10;
+  const sliceW = cols * BW + rows * (BW * 0.5);
+  const sliceH = rows * (BH * 0.5) + BH + cols * (BH * 0.5);
+  const depthOffX = 0, depthOffY = -(BD + 4);
+
+  const totalW = sliceW + BW + 20;
+  const totalH = sliceH + Math.abs(depthOffY) * (slices - 1) + BD + 20;
+
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = totalW * dpr;
+  canvas.height = totalH * dpr;
+  canvas.style.width = totalW + "px";
+  canvas.style.height = totalH + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, totalW, totalH);
+
+  const originX = rows * (BW * 0.5) + 8;
+  const originY = totalH - 8 - (BH * 0.5);
+
+  function isoX(c, r) { return originX + c * (BW * 0.5) - r * (BW * 0.5); }
+  function isoY(c, r) { return originY - c * (BH * 0.5) - r * (BH * 0.5); }
+
+  function drawBlock(cx, cy, rgb, alpha) {
+    const hw = BW * 0.5, hh = BH * 0.5;
+    const base = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+    const dark = `rgba(${Math.max(0,rgb[0]-40)},${Math.max(0,rgb[1]-40)},${Math.max(0,rgb[2]-40)},${alpha})`;
+    const darker = `rgba(${Math.max(0,rgb[0]-70)},${Math.max(0,rgb[1]-70)},${Math.max(0,rgb[2]-70)},${alpha})`;
+
+    // Top face
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - BD);
+    ctx.lineTo(cx + hw, cy - BD + hh);
+    ctx.lineTo(cx, cy - BD + BH);
+    ctx.lineTo(cx - hw, cy - BD + hh);
+    ctx.closePath();
+    ctx.fillStyle = base; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,.15)"; ctx.lineWidth = 0.5; ctx.stroke();
+
+    // Left face
+    ctx.beginPath();
+    ctx.moveTo(cx - hw, cy - BD + hh);
+    ctx.lineTo(cx, cy - BD + BH);
+    ctx.lineTo(cx, cy + BH);
+    ctx.lineTo(cx - hw, cy + hh);
+    ctx.closePath();
+    ctx.fillStyle = dark; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,.15)"; ctx.stroke();
+
+    // Right face
+    ctx.beginPath();
+    ctx.moveTo(cx + hw, cy - BD + hh);
+    ctx.lineTo(cx, cy - BD + BH);
+    ctx.lineTo(cx, cy + BH);
+    ctx.lineTo(cx + hw, cy + hh);
+    ctx.closePath();
+    ctx.fillStyle = darker; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,.15)"; ctx.stroke();
+  }
+
+  function getValue(s, r, c) {
+    try {
+      if(rank === 1) return VIZ.values[c];
+      if(rank === 2) return VIZ.values[r][c];
+      if(rank === 3) return VIZ.values[s][r][c];
+      const s0 = Math.floor(s / shape[1]), s1 = s % shape[1];
+      return VIZ.values[s0][s1][r][c];
+    } catch { return 0; }
+  }
+
+  for(let s = slices - 1; s >= 0; s--) {
+    const sOffX = s * depthOffX;
+    const sOffY = s * depthOffY;
+
+    for(let r = 0; r < rows; r++) {
+      for(let c = cols - 1; c >= 0; c--) {
+        const val = getValue(s, r, c);
+        const t = (val - VIZ.min) / (VIZ.max - VIZ.min);
+        const rgb = colormap(t);
+
+        const cx = isoX(c, r) + sOffX;
+        const cy = isoY(c, r) + sOffY;
+
+        drawBlock(cx, cy, rgb, 0.92);
+
+        VIZ.cells.push({
+          cx, cy, col: c, row: r, slice: s, val,
+          hw: BW * 0.5, hh: BH * 0.5
+        });
+      }
+    }
+  }
+
+  // Legend
+  let note = `${shape.join(" x ")}`;
+  if(m.truncated) note += " (showing first 8 per dim)";
+  $("vizNote").innerHTML = note +
+    `<div class="viz-legend"><span>${VIZ.min.toFixed(2)}</span>` +
+    `<div class="viz-legend-bar" style="background:linear-gradient(90deg,rgb(59,130,246),rgb(248,250,252),rgb(239,68,68))"></div>` +
+    `<span>${VIZ.max.toFixed(2)}</span></div>`;
+
+  wrap.classList.remove("hidden");
+  setupVizHover();
+}
+
+/* ── Hover hit-testing ── */
+function setupVizHover() {
+  const canvas = $("vizCanvas");
+  const tip = $("vizTooltip");
+  const wrap = $("vizWrap");
+
+  function hitTest(mx, my) {
+    for(let i = VIZ.cells.length - 1; i >= 0; i--) {
+      const c = VIZ.cells[i];
+      const dx = mx - c.cx, dy = my - c.cy;
+      const u = dx / c.hw, v = dy / c.hh;
+      if(Math.abs(u + v) <= 1 && Math.abs(u - v) <= 1) return c;
+    }
+    return null;
+  }
+
+  canvas.onmousemove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = parseFloat(canvas.style.width) / rect.width;
+    const scaleY = parseFloat(canvas.style.height) / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
+
+    const cell = hitTest(mx, my);
+    if(!cell) { tip.classList.add("hidden"); return; }
+
+    let coordStr;
+    if(VIZ.shape.length === 1) coordStr = `[${cell.col}]`;
+    else if(VIZ.shape.length === 2) coordStr = `[${cell.row}, ${cell.col}]`;
+    else if(VIZ.shape.length === 3) coordStr = `[${cell.slice}, ${cell.row}, ${cell.col}]`;
+    else {
+      const s0 = Math.floor(cell.slice / VIZ.shape[1]);
+      const s1 = cell.slice % VIZ.shape[1];
+      coordStr = `[${s0}, ${s1}, ${cell.row}, ${cell.col}]`;
+    }
+
+    const vStr = typeof cell.val === "number" ? cell.val.toFixed(4) : String(cell.val);
+    tip.innerHTML = `<b>${coordStr}</b><br>${vStr}<br><span style="color:var(--muted)">${VIZ.dtype}</span>`;
+
+    const tipX = Math.min(e.clientX - rect.left + 12, rect.width - 110);
+    const tipY = Math.max(e.clientY - rect.top - 50, 4);
+    tip.style.left = tipX + "px";
+    tip.style.top = tipY + "px";
+    tip.classList.remove("hidden");
+  };
+
+  canvas.onmouseleave = () => { tip.classList.add("hidden"); };
 }
 
 function renderNext(n){

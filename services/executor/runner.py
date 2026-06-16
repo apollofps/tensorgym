@@ -91,11 +91,22 @@ def _has_python_loops(code: str) -> bool:
 # --------------------------------------------------------------------------- #
 # Tensor helpers
 # --------------------------------------------------------------------------- #
+def _sample_values(t):  # noqa: ANN001, ANN202
+    """Return a sliced preview for tensors with >512 elements (cap each dim to 8)."""
+    slices = tuple(slice(0, min(s, 8)) for s in t.shape)
+    return t[slices].detach().cpu().tolist()
+
+
 def _tensor_metadata(t: Any) -> dict[str, Any]:  # noqa: ANN401
     import torch
 
     if not isinstance(t, torch.Tensor):
         return {"is_tensor": False, "python_type": type(t).__name__}
+
+    n = int(t.numel())
+    truncated = n > 512
+    values = t.detach().cpu().tolist() if not truncated else _sample_values(t)
+
     return {
         "is_tensor": True,
         "shape": list(t.shape),
@@ -104,10 +115,12 @@ def _tensor_metadata(t: Any) -> dict[str, Any]:  # noqa: ANN401
         "device": str(t.device),
         "requires_grad": bool(t.requires_grad),
         "grad_fn": type(t.grad_fn).__name__ if t.grad_fn is not None else None,
-        "numel": int(t.numel()),
+        "numel": n,
         "element_size_bytes": t.element_size(),
-        "nbytes": int(t.numel() * t.element_size()),
+        "nbytes": n * t.element_size(),
         "is_contiguous": bool(t.is_contiguous()),
+        "values": values,
+        "truncated": truncated,
     }
 
 
