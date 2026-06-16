@@ -1,88 +1,133 @@
-# TensorGym
+<p align="center">
+  <img src="docs/images/logo.png" alt="TensorGym" width="120" />
+</p>
 
-Challenge-first, just-in-time, **documentation-grounded** way to learn PyTorch by
-solving, running, and debugging real tensor code — not by reading long chapters.
+<h1 align="center">TensorGym</h1>
 
-> **Status: Milestone 1 — one complete, tested vertical slice.**
-> The full challenge library (30 challenges / 15 capsules) is intentionally **not**
-> generated yet. See `RESEARCH_MANIFEST.md` and `docs/` for scope and decisions.
+<p align="center">
+  Learn PyTorch by solving problems, not reading tutorials.
+</p>
 
-## What the slice does
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.12-3776ab?logo=python&logoColor=fff" alt="Python 3.12" />
+  <img src="https://img.shields.io/badge/PyTorch-2.12.0-ee4c2c?logo=pytorch&logoColor=fff" alt="PyTorch 2.12.0" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=fff" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Docker-sandboxed-2496ed?logo=docker&logoColor=fff" alt="Docker" />
+  <img src="https://img.shields.io/badge/tests-19%20passing-5db870" alt="Tests" />
+  <img src="https://img.shields.io/badge/challenges-30-6e9eff" alt="30 Challenges" />
+  <img src="https://img.shields.io/github/license/apollofps/tensorgym" alt="License" />
+</p>
 
-A single beginner challenge, **Normalize Each Row**, drives the entire learning
-loop end to end:
+---
+
+TensorGym is a **challenge-first, documentation-grounded** learning platform for PyTorch. Pick a problem from the roadmap, write tensor code in the browser, and get instant feedback from a sandboxed executor — all without leaving the page.
+
+<p align="center">
+  <img src="docs/images/screenshot-roadmap.png" alt="Problem Roadmap" width="720" />
+</p>
+
+<p align="center">
+  <img src="docs/images/screenshot-workspace.png" alt="Workspace" width="720" />
+</p>
+
+## How it works
 
 ```
-challenge → "I don't know this yet" → Concept Capsule → executable example →
-tiny warm-up → return (code preserved) → run & submit (visible + hidden tests) →
-targeted feedback → progress + mastery update
+Roadmap → pick a challenge → write code → Run/Submit
+                                              ↓
+                            visible + hidden tests in Docker sandbox
+                                              ↓
+                          targeted feedback → mastery update → next problem
 ```
 
-All learner code executes in a **hardened, network-isolated Docker sandbox**
-pinned to **PyTorch 2.12.0 (CPU) / Python 3.12** — never in the API process.
+Stuck? Hit **"I don't know this yet"** to get a just-in-time Concept Capsule with an executable example and a warm-up exercise, then return to the original challenge with your code preserved.
 
-## Pinned environment (verified 2026-06-15)
+## Features
 
 | | |
 |---|---|
-| PyTorch | **2.12.0** (latest stable, released 2026-05-13) |
-| Python (sandbox) | 3.12 |
-| Device | CPU only (labeled CPU-verified) |
-| Image | `tensorgym-executor:py312-torch2.12.0-cpu` |
+| **30 challenges** | Across 5 categories: Tensor & Shape, Autograd, nn.Module, Debugging, Performance |
+| **Curated roadmap** | Problems ordered by learning progression within each category, easy → hard |
+| **Concept capsules** | 15 just-in-time micro-lessons with runnable examples and warm-ups |
+| **Sandboxed execution** | All code runs in Docker with network isolation, memory caps, and timeouts |
+| **Targeted feedback** | Mistake taxonomy maps errors to actionable next steps |
+| **Tensor inspector** | See shape, dtype, grad_fn, and more for every output |
+| **Mastery tracking** | Per-concept progress bars and attempt history |
+| **Pinned environment** | PyTorch 2.12.0 CPU / Python 3.12 — reproducible results |
 
-Version and documentation facts are verified from official sources in
-[`RESEARCH_MANIFEST.md`](RESEARCH_MANIFEST.md).
+## Challenge categories
 
-## Prerequisites
-- Docker (daemon running)
-- Python 3.11+ on the host (for the API/tests; the host never needs torch)
+| Category | Count | Topics |
+|---|---|---|
+| Tensor & Shape | 10 | Creation, reshaping, broadcasting, indexing, normalization |
+| Autograd | 6 | Gradients, no_grad, detach/clone, chain rule, higher-order |
+| nn.Module & Training | 6 | Layers, optimizers, loss functions, train/eval, skip connections |
+| Debugging | 4 | Shape mismatches, wrong reductions, missing grads, in-place errors |
+| Performance | 4 | Vectorization, views vs copies, batched ops, memory optimization |
 
-## Quickstart
+## Quick start
+
+**Prerequisites:** Docker (running) and Python 3.11+ on the host.
 
 ```bash
-make setup            # venv + host deps (no torch on the host)
-make build-executor   # build the pinned PyTorch 2.12.0 CPU sandbox image
-make test             # full suite, runs real code in Docker (~22s)
-make run              # serve API + UI at http://127.0.0.1:8000
+# Clone
+git clone https://github.com/apollofps/tensorgym.git
+cd tensorgym
+
+# Set up
+make setup            # create venv + install host dependencies
+make build-executor   # build the pinned PyTorch sandbox image
+
+# Run
+make run              # start API + UI at http://127.0.0.1:8000
 ```
 
-Open http://127.0.0.1:8000 and walk the flow: click **I don't know this yet**,
-read the capsule, run the example, do the warm-up, return (your code is preserved),
-then **Submit**.
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) — you'll land on the problem roadmap.
 
 ## Tests
 
-`make test` runs 19 tests:
-- `test_content_verification.py` — reference solution, capsule example, and warm-up
-  all run in the **pinned Docker env**; published items are `verified` with sources.
-- `test_executor.py` — sandbox security (no network, timeout reaping, AST loop
-  ban) + structured result protocol + tensor metadata.
-- `test_feedback.py` — deterministic mistake-taxonomy mapping (no Docker).
-- `test_flow_e2e.py` — the whole slice through the API + Docker, including
-  code-preservation and durable persistence across a restart.
-
-`make test-fast` runs only the non-Docker unit tests.
-
-## Layout
-
-```
-apps/web/            minimal static UI (textarea editor + fetch) — drives the flow
-apps/api/app/        FastAPI: content loader, feedback engine, progress, endpoints
-services/executor/   Dockerfile + runner.py (in-container) + docker_executor.py (host)
-content/             challenge + capsule + warm-up + sources (data, with verification)
-tests/               unit + executor + content-verification + e2e
-docs/                ARCHITECTURE.md · THREAT_MODEL.md · LEARNER_FLOWS.md
-RESEARCH_MANIFEST.md research provenance and pinned-env decisions
+```bash
+make test             # full suite (19 tests, requires Docker)
+make test-fast        # unit tests only (no Docker)
 ```
 
-## Security model
-Learner code runs only in Docker with `--network none`, memory/CPU/pids caps, a
-read-only root, dropped capabilities, `no-new-privileges`, a non-root user, and a
-wall-clock timeout. The Docker socket is never exposed to learner code. Full
-detail and the tests that assert it: [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md).
+Tests cover content verification (solutions run in Docker), executor security (network isolation, timeouts, AST checks), feedback taxonomy, and end-to-end flow including code preservation across restarts.
 
-## Not in this milestone (deferred, by design)
-Monaco/Next.js UI · the full content library · diagnostic · content-audit command ·
-visualizations beyond the tensor inspector · mini-projects · GPU / `torch.compile`
-/ vLLM roadmap items. These have extension points but are out of scope until the
-slice is reviewed.
+## Architecture
+
+```
+apps/web/              static UI — roadmap + workspace with CodeMirror editor
+apps/api/app/          FastAPI backend — content, feedback, progress, execution
+services/executor/     Dockerfile + runner.py (in-container) + docker_executor.py (host)
+content/               challenges, capsules, warm-ups, source registries (YAML + Python)
+tests/                 unit, executor security, content verification, e2e
+docs/                  architecture, threat model, learner flows
+```
+
+## Security
+
+Learner code never runs in the API process. Every execution happens in a disposable Docker container with:
+
+- `--network none` — no internet access
+- Memory, CPU, and PID limits
+- Read-only filesystem
+- Dropped capabilities + `no-new-privileges`
+- Non-root user
+- Wall-clock timeout with forced kill
+
+See [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md) for the full model and the tests that assert each constraint.
+
+## Pinned environment
+
+| | |
+|---|---|
+| PyTorch | 2.12.0 (stable, released 2025-05-13) |
+| Python | 3.12 |
+| Device | CPU only |
+| Image | `tensorgym-executor:py312-torch2.12.0-cpu` |
+
+All version claims are verified from official sources in [`RESEARCH_MANIFEST.md`](RESEARCH_MANIFEST.md).
+
+## License
+
+MIT
