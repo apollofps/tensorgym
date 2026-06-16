@@ -8,246 +8,365 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/dracula.min.css">
 <style>
   :root {
-    --bg:       #111316;
-    --surface:  #191b1f;
-    --raised:   #1e2025;
-    --edge:     #2a2d33;
-    --edge-dim: #222529;
-    --ink:      #d4d7dd;
-    --ink-h:    #eceef2;
-    --muted:    #7c818a;
-    --subtle:   #494d55;
-    --accent:   #6e9eff;
-    --accent-d: rgba(110,158,255,.10);
-    --green:    #5db870;
-    --green-d:  rgba(93,184,112,.10);
-    --red:      #d46a65;
-    --red-d:    rgba(212,106,101,.10);
-    --amber:    #c9a84e;
-    --amber-d:  rgba(201,168,78,.10);
-    --r:        6px;
+    --bg:       #0f1115;
+    --surface:  #161921;
+    --raised:   #1c1f28;
+    --raised2:  #21242e;
+    --edge:     #282c38;
+    --edge-dim: #1f222b;
+    --ink:      #cdd1da;
+    --ink-h:    #e8ebf0;
+    --muted:    #6b7280;
+    --subtle:   #454b58;
+    --accent:   #4d8dff;
+    --accent-d: rgba(77,141,255,.12);
+    --green:    #34d399;
+    --green-d:  rgba(52,211,153,.10);
+    --green-s:  #22c55e;
+    --red:      #f87171;
+    --red-d:    rgba(248,113,113,.10);
+    --amber:    #fbbf24;
+    --amber-d:  rgba(251,191,36,.10);
+    --blue-bar: #3b82f6;
+    --r:        8px;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
 
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font: 13.5px/1.6 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Nav ── */
+  /* ─── SVG Icons (inline) ─── */
+  .ico { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .ico-sm { width: 14px; height: 14px; }
+  .ico-fill { fill: currentColor; stroke: none; }
+
+  /* ─── Nav ─── */
   nav {
-    position: sticky; top: 0; z-index: 20;
-    display: flex; align-items: center; gap: 16px;
-    padding: 0 24px; height: 48px;
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center;
+    padding: 0 16px; height: 48px;
     background: var(--surface);
     border-bottom: 1px solid var(--edge-dim);
   }
 
-  .brand {
-    font-size: 14px; font-weight: 600; letter-spacing: -.2px;
-    color: var(--ink-h); flex-shrink: 0;
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    margin-right: 24px; flex-shrink: 0; cursor: pointer;
   }
-  .brand b { color: var(--accent); font-weight: 700; }
-
-  .nav-links {
-    display: flex; gap: 2px; margin-left: 8px;
-  }
-  .nav-links button {
-    background: none; border: none; color: var(--muted);
-    font: 12.5px/1 inherit; padding: 6px 12px; border-radius: 4px;
-    cursor: pointer; transition: color .15s, background .15s;
-  }
-  .nav-links button:hover { color: var(--ink); background: var(--raised); }
-  .nav-links button.active { color: var(--ink-h); background: var(--raised); }
-
-  .nav-env {
-    margin-left: auto; font-size: 11px; color: var(--subtle);
-  }
-
-  /* ── Roadmap View ── */
-  #roadmapView {
-    max-width: 780px; margin: 0 auto; padding: 32px 24px 64px;
-  }
-
-  .roadmap-head {
-    margin-bottom: 32px;
-  }
-  .roadmap-head h1 {
-    font-size: 22px; font-weight: 600; letter-spacing: -.3px;
-    color: var(--ink-h); margin: 0 0 4px;
-  }
-  .roadmap-head p {
-    font-size: 13px; color: var(--muted); margin: 0;
-  }
-
-  .topic-group {
-    margin-bottom: 28px;
-  }
-  .topic-label {
-    font-size: 11px; font-weight: 600; letter-spacing: .04em;
-    text-transform: uppercase; color: var(--subtle);
-    padding-bottom: 8px; margin-bottom: 2px;
-    border-bottom: 1px solid var(--edge-dim);
-  }
-
-  .problem-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 9px 4px;
-    border-bottom: 1px solid var(--edge-dim);
-    cursor: pointer;
-    transition: background .12s;
-    border-radius: 3px;
-  }
-  .problem-row:last-child { border-bottom: none; }
-  .problem-row:hover { background: var(--raised); }
-
-  .problem-status {
-    width: 18px; height: 18px; flex-shrink: 0;
-    border-radius: 50%; border: 1.5px solid var(--edge);
+  .nav-logo {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, #2563eb, #4d8dff);
     display: grid; place-items: center;
-    font-size: 10px; color: transparent;
-    transition: border-color .15s, background .15s;
+    font-size: 14px; font-weight: 800; color: #fff;
+    letter-spacing: -0.5px;
   }
-  .problem-status.done {
-    border-color: var(--green); background: var(--green-d);
-    color: var(--green);
-  }
-
-  .problem-title {
-    flex: 1; font-size: 13px; color: var(--ink);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  .nav-name {
+    font-size: 16px; font-weight: 700; color: var(--ink-h);
+    letter-spacing: -.3px;
   }
 
-  .diff-dot {
-    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-    flex-shrink: 0;
+  .nav-tabs {
+    display: flex; gap: 4px;
   }
-  .diff-dot.easy   { background: var(--green); }
-  .diff-dot.medium { background: var(--amber); }
-  .diff-dot.hard   { background: var(--red); }
-
-  .problem-time {
-    font-size: 11px; color: var(--subtle); flex-shrink: 0; min-width: 36px;
-    text-align: right;
+  .nav-tab {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: 1px solid transparent;
+    color: var(--muted); font: 13px/1 inherit; font-weight: 500;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    transition: all .15s;
   }
-
-  .roadmap-stats {
-    display: flex; gap: 24px; margin-bottom: 24px;
-  }
-  .stat-block {
-    display: flex; flex-direction: column;
-  }
-  .stat-val {
-    font-size: 20px; font-weight: 600; color: var(--ink-h);
-    letter-spacing: -.5px; line-height: 1.2;
-  }
-  .stat-label {
-    font-size: 11px; color: var(--muted);
+  .nav-tab:hover { color: var(--ink); background: var(--raised); }
+  .nav-tab.active {
+    color: var(--accent); background: var(--accent-d);
+    border-color: rgba(77,141,255,.2);
   }
 
-  /* ── Workspace View ── */
-  #workspaceView {
-    display: none;
+  .nav-right {
+    margin-left: auto; display: flex; align-items: center; gap: 14px;
   }
-  #workspaceView.active { display: block; }
+  .nav-env-text { font-size: 11.5px; color: var(--muted); }
+  .nav-gear {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--raised); border: 1px solid var(--edge-dim);
+    display: grid; place-items: center; cursor: pointer; color: var(--muted);
+    transition: color .15s;
+  }
+  .nav-gear:hover { color: var(--ink); }
+
+  /* ─── Roadmap ─── */
+  #roadmapView { max-width: 780px; margin: 0 auto; padding: 36px 24px 64px; }
   #roadmapView.hide { display: none; }
 
-  .ws-grid {
-    display: grid;
-    grid-template-columns: 300px 1fr 280px;
-    gap: 1px; background: var(--edge-dim);
+  .rm-title { font-size: 24px; font-weight: 700; color: var(--ink-h); margin: 0 0 4px; letter-spacing: -.4px; }
+  .rm-sub { font-size: 13.5px; color: var(--muted); margin: 0 0 24px; }
+
+  .rm-stats {
+    display: flex; border: 1px solid var(--edge); border-radius: 10px;
+    overflow: hidden; margin-bottom: 32px;
+  }
+  .rm-stat {
+    flex: 1; text-align: center; padding: 16px 12px;
+    border-right: 1px solid var(--edge);
+  }
+  .rm-stat:last-child { border-right: none; }
+  .rm-stat-val { font-size: 22px; font-weight: 700; color: var(--ink-h); letter-spacing: -.5px; }
+  .rm-stat-lbl {
+    font-size: 11.5px; color: var(--muted); margin-top: 2px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .rm-stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .rm-group { margin-bottom: 20px; border: 1px solid var(--edge); border-radius: 10px; overflow: hidden; }
+
+  .rm-group-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--raised);
+    cursor: pointer; user-select: none;
+  }
+  .rm-group-head:hover { background: var(--raised2); }
+  .rm-group-icon { color: var(--muted); }
+  .rm-group-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--ink-h);
+  }
+  .rm-group-count {
+    font-size: 12px; color: var(--muted); font-weight: 400;
+    letter-spacing: 0; text-transform: none;
+  }
+  .rm-group-chevron { margin-left: auto; color: var(--muted); transition: transform .2s; }
+  .rm-group-chevron.collapsed { transform: rotate(-90deg); }
+
+  .rm-group-body { }
+  .rm-group-body.collapsed { display: none; }
+
+  .rm-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--edge-dim);
+    cursor: pointer; transition: background .12s;
+  }
+  .rm-row:hover { background: var(--raised); }
+
+  .rm-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--raised); border: 1px solid var(--edge);
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 600; color: var(--muted);
+    flex-shrink: 0;
+  }
+  .rm-num.done { background: var(--green-d); border-color: var(--green); color: var(--green); }
+
+  .rm-problem-name { flex: 1; font-size: 13.5px; color: var(--ink); }
+
+  .rm-diff { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .rm-diff.easy   { background: var(--green-s); }
+  .rm-diff.medium { background: var(--amber); }
+  .rm-diff.hard   { background: var(--red); }
+
+  .rm-time { font-size: 12px; color: var(--subtle); min-width: 32px; text-align: right; }
+
+  /* ─── Workspace ─── */
+  #workspaceView { display: none; }
+  #workspaceView.active { display: block; }
+
+  .ws {
+    display: grid; grid-template-columns: 260px 1fr 280px;
     min-height: calc(100vh - 48px);
   }
 
-  .ws-col {
-    background: var(--bg);
+  .ws-left {
+    background: var(--surface); border-right: 1px solid var(--edge-dim);
+    overflow-y: auto; padding: 20px 18px;
+  }
+  .ws-center {
+    background: var(--bg); overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .ws-right {
+    background: var(--surface); border-left: 1px solid var(--edge-dim);
     overflow-y: auto;
   }
-  .ws-col:first-child { background: var(--surface); }
-  .ws-col:last-child  { background: var(--surface); }
 
-  .ws-section {
-    padding: 16px 18px;
-    border-bottom: 1px solid var(--edge-dim);
-  }
-  .ws-section:last-child { border-bottom: none; }
+  /* Left panel */
+  .ws-challenge-title { font-size: 16px; font-weight: 700; color: var(--ink-h); margin-bottom: 2px; letter-spacing: -.2px; }
+  .ws-challenge-meta { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
 
-  .ws-label {
-    font-size: 10.5px; font-weight: 600; letter-spacing: .03em;
-    text-transform: uppercase; color: var(--subtle);
-    margin-bottom: 8px;
+  .ws-sec-title {
+    font-size: 13px; font-weight: 700; color: var(--ink-h);
+    margin: 16px 0 8px;
+  }
+  .ws-sec-title:first-child { margin-top: 0; }
+
+  .ws-problem-box {
+    background: var(--raised); border: 1px solid var(--edge);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 12.5px; line-height: 1.65; color: var(--ink);
+  }
+  .ws-problem-box code {
+    font-size: 11.5px; background: var(--bg); border: 1px solid var(--edge-dim);
+    border-radius: 3px; padding: 1px 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
-  .ws-title {
-    font-size: 15px; font-weight: 600; color: var(--ink-h);
-    letter-spacing: -.2px; margin-bottom: 2px;
+  .ws-constraint-list { list-style: none; padding: 0; margin: 0; }
+  .ws-constraint-list li {
+    font-size: 12.5px; color: var(--ink); padding: 2px 0;
+    display: flex; align-items: baseline; gap: 6px;
   }
-  .ws-meta {
-    font-size: 12px; color: var(--muted); margin-bottom: 12px;
+  .ws-constraint-list li::before { content: "•"; color: var(--muted); font-size: 14px; }
+
+  .ws-prereq {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; font-size: 13px;
+  }
+  .ws-prereq-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--green-d); border: 1.5px solid var(--green);
+    display: grid; place-items: center; flex-shrink: 0;
+    color: var(--green); font-size: 11px;
+  }
+  .ws-prereq-icon.unknown {
+    background: var(--amber-d); border-color: var(--amber); color: var(--amber);
   }
 
-  /* ── Shared components ── */
-  pre {
-    font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    white-space: pre-wrap; background: var(--bg);
-    border: 1px solid var(--edge-dim); border-radius: var(--r);
-    padding: 10px 12px; margin: 4px 0; overflow: auto; color: var(--ink);
+  /* Center: file tab bar */
+  .ws-file-tabs {
+    display: flex; align-items: center; gap: 0;
+    background: var(--surface); border-bottom: 1px solid var(--edge-dim);
+    padding: 0 8px; height: 36px; flex-shrink: 0;
   }
-  pre.plain { background: transparent; border: none; padding: 0; margin: 0 0 8px; }
+  .ws-file-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 12px; height: 36px;
+    font-size: 12.5px; color: var(--ink);
+    background: var(--bg); border-right: 1px solid var(--edge-dim);
+    cursor: default; position: relative;
+  }
+  .ws-file-tab::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--accent); border-radius: 0 0 2px 2px;
+  }
+  .ws-file-tab .py-icon {
+    width: 14px; height: 14px; border-radius: 3px;
+    background: #3572A5; display: grid; place-items: center;
+    font-size: 9px; font-weight: 700; color: #fff;
+  }
+  .ws-file-tab-close {
+    font-size: 14px; color: var(--subtle); cursor: pointer;
+    line-height: 1; margin-left: 4px;
+  }
+  .ws-file-tab-close:hover { color: var(--ink); }
+  .ws-tab-plus {
+    width: 28px; height: 28px; display: grid; place-items: center;
+    color: var(--subtle); cursor: pointer; font-size: 16px;
+    border-radius: 4px; margin-left: 4px;
+  }
+  .ws-tab-plus:hover { color: var(--ink); background: var(--raised); }
+  .ws-tab-spacer { flex: 1; }
+  .ws-tab-action {
+    width: 28px; height: 28px; display: grid; place-items: center;
+    color: var(--subtle); cursor: pointer; border-radius: 4px;
+  }
+  .ws-tab-action:hover { color: var(--ink); background: var(--raised); }
 
-  button {
+  .ws-editor-area { padding: 12px 16px; flex: 1; }
+
+  .ws-btn-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+
+  .ws-btn {
     display: inline-flex; align-items: center; gap: 5px;
     font: 12px/1 inherit; font-weight: 500; padding: 7px 14px;
-    border-radius: var(--r); border: 1px solid var(--edge);
+    border-radius: 6px; border: 1px solid var(--edge);
     background: var(--raised); color: var(--ink);
-    cursor: pointer;
-    transition: border-color .15s, background .15s, color .15s;
-    white-space: nowrap;
+    cursor: pointer; transition: all .15s; white-space: nowrap;
   }
-  button:hover:not(:disabled) { border-color: var(--accent); color: var(--ink-h); }
-  button.primary {
-    background: var(--accent-d);
-    border-color: rgba(110,158,255,.25);
-    color: var(--accent);
+  .ws-btn:hover { border-color: var(--accent); color: var(--ink-h); }
+  .ws-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .ws-btn.run {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff; font-weight: 600;
   }
-  button.primary:hover:not(:disabled) {
-    background: rgba(110,158,255,.16);
-    border-color: rgba(110,158,255,.4);
+  .ws-btn.run:hover { background: #3d7fee; }
+  .ws-btn.submit {
+    background: var(--green-s); border-color: var(--green-s);
+    color: #fff; font-weight: 600;
   }
-  button:disabled { opacity: .35; cursor: not-allowed; }
+  .ws-btn.submit:hover { background: #1db954; }
 
-  .btn-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
-
-  h2 {
-    font-size: 10.5px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: .03em;
-    color: var(--subtle); margin: 16px 0 6px;
+  /* Right panel sections */
+  .ws-r-section { padding: 14px 16px; border-bottom: 1px solid var(--edge-dim); }
+  .ws-r-section:last-child { border-bottom: none; }
+  .ws-r-title {
+    font-size: 13px; font-weight: 700; color: var(--ink-h);
+    margin-bottom: 10px;
   }
-  h2:first-child { margin-top: 0; }
 
-  .ok   { color: var(--green); }
-  .bad  { color: var(--red); }
-  .mut  { color: var(--muted); }
-  .warn { color: var(--amber); }
+  /* Inspector table */
+  .insp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .insp-table td {
+    padding: 3px 0; border-bottom: 1px solid var(--edge-dim);
+  }
+  .insp-table tr:last-child td { border-bottom: none; }
+  .insp-table td:first-child {
+    color: var(--muted); font-weight: 500; padding-right: 12px; white-space: nowrap;
+  }
+  .insp-table td:last-child {
+    color: var(--ink); font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+  }
 
-  .chk {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 8px; padding: 4px 0;
+  /* Mastery bars */
+  .mastery-row { margin-bottom: 10px; }
+  .mastery-label {
+    display: flex; justify-content: space-between;
+    font-size: 12px; margin-bottom: 4px;
+  }
+  .mastery-label span:first-child { color: var(--ink); }
+  .mastery-label span:last-child { color: var(--muted); font-weight: 600; }
+  .mastery-track {
+    height: 6px; background: var(--edge); border-radius: 100px; overflow: hidden;
+  }
+  .mastery-fill {
+    height: 100%; background: var(--blue-bar); border-radius: 100px;
+    transition: width .4s ease-out;
+  }
+
+  /* History */
+  .hist-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; font-size: 12px;
     border-bottom: 1px solid var(--edge-dim);
-    font-size: 12.5px;
   }
-  .chk:last-child { border-bottom: none; }
-  .chk span:last-child {
-    font-size: 10.5px; font-weight: 600;
-    padding: 1px 7px; border-radius: 100px; flex-shrink: 0;
+  .hist-row:last-child { border-bottom: none; }
+  .hist-icon { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .hist-label { font-weight: 600; }
+  .hist-time { margin-left: auto; color: var(--subtle); font-size: 11px; }
+  .hist-chev { color: var(--subtle); font-size: 13px; }
+
+  /* Result area */
+  .result-status {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 13.5px; margin-bottom: 12px;
   }
-  .chk span.ok   { color: var(--green); background: var(--green-d); }
-  .chk span.bad  { color: var(--red);   background: var(--red-d); }
-  .chk span.warn { color: var(--amber); background: var(--amber-d); }
+  .result-status .ico { width: 18px; height: 18px; }
+
+  .chk-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 0; border-bottom: 1px solid var(--edge-dim); font-size: 12.5px;
+  }
+  .chk-row:last-child { border-bottom: none; }
+  .chk-row .ico { width: 14px; height: 14px; }
+  .chk-name { flex: 1; color: var(--ink); }
+  .chk-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 10px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: .04em;
+  }
+  .chk-badge.pass { background: var(--green-d); color: var(--green); }
+  .chk-badge.fail { background: var(--red-d); color: var(--red); }
 
   .tag {
     display: inline-block; font-size: 10px; font-weight: 600;
@@ -256,146 +375,183 @@
     color: var(--muted); vertical-align: middle; margin-right: 4px;
   }
 
-  .kvs { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 12px; }
-  .kvs span:nth-child(odd)  { color: var(--muted); }
-  .kvs span:nth-child(even) { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
-
-  .bar {
-    height: 3px; background: var(--edge-dim);
-    border-radius: 100px; overflow: hidden; margin: 3px 0 10px;
-  }
-  .bar > span {
-    display: block; height: 100%; background: var(--green);
-    border-radius: 100px; transition: width .4s ease-out;
-  }
-
+  /* Misc */
   .hidden { display: none; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  h2 {
+    font-size: 12px; font-weight: 700; color: var(--ink-h);
+    margin: 16px 0 8px;
+  }
+  h2:first-child { margin-top: 0; }
+  pre {
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap; background: var(--raised);
+    border: 1px solid var(--edge); border-radius: 8px;
+    padding: 10px 12px; margin: 4px 0; overflow: auto; color: var(--ink);
+  }
+  pre.plain { background: transparent; border: none; padding: 0; margin: 0 0 8px; }
 
   .CodeMirror {
-    height: auto; border: 1px solid var(--edge-dim); border-radius: var(--r);
+    height: auto; border: 1px solid var(--edge); border-radius: 6px;
     font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     line-height: 1.55;
   }
-  .CodeMirror-scroll   { min-height: 200px; }
-  #cm-code .CodeMirror-scroll { min-height: 260px; }
-  .CodeMirror-gutters  { border-right: 1px solid var(--edge-dim); background: var(--bg); }
+  .CodeMirror-scroll { min-height: 200px; }
+  #cm-code .CodeMirror-scroll { min-height: 280px; }
+  .CodeMirror-gutters { border-right: 1px solid var(--edge-dim); background: var(--bg); }
   .CodeMirror-linenumber { color: var(--subtle); padding: 0 8px 0 6px; }
 
   @media (max-width: 1100px) {
-    .ws-grid { grid-template-columns: 1fr; }
-    .ws-col:first-child, .ws-col:last-child { background: var(--bg); }
+    .ws { grid-template-columns: 1fr; }
+    .ws-left, .ws-right { border: none; }
   }
 </style>
 </head>
 <body>
 
+<!-- ─── NAV ─── -->
 <nav>
-  <div class="brand"><b>Tensor</b>Gym</div>
-  <div class="nav-links">
-    <button class="active" id="navRoadmap" onclick="showView('roadmap')">Roadmap</button>
-    <button id="navWorkspace" onclick="showView('workspace')">Workspace</button>
+  <div class="nav-brand" onclick="showView('roadmap')">
+    <div class="nav-logo">T</div>
+    <span class="nav-name">TensorGym</span>
   </div>
-  <span class="nav-env" id="env"></span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="navRoadmap" onclick="showView('roadmap')">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+      Roadmap
+    </button>
+    <button class="nav-tab" id="navWorkspace" onclick="showView('workspace')">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M8 9l3 3-3 3m5 0h3M4 19h16a1 1 0 001-1V6a1 1 0 00-1-1H4a1 1 0 00-1 1v12a1 1 0 001 1z"/></svg>
+      Workspace
+    </button>
+  </div>
+  <div class="nav-right">
+    <span class="nav-env-text" id="env"></span>
+    <div class="nav-gear">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </div>
+  </div>
 </nav>
 
-<!-- ═══════════════════ ROADMAP VIEW ═══════════════════ -->
+<!-- ═══════════════ ROADMAP ═══════════════ -->
 <div id="roadmapView">
-  <div class="roadmap-head">
-    <h1>Problem Roadmap</h1>
-    <p>30 challenges across 5 categories. Select a problem to begin.</p>
-  </div>
-  <div class="roadmap-stats" id="roadmapStats"></div>
+  <h1 class="rm-title">Problem Roadmap</h1>
+  <p class="rm-sub">30 challenges across 5 categories.</p>
+  <div class="rm-stats" id="roadmapStats"></div>
   <div id="roadmapList"></div>
 </div>
 
-<!-- ═══════════════════ WORKSPACE VIEW ═══════════════════ -->
+<!-- ═══════════════ WORKSPACE ═══════════════ -->
 <div id="workspaceView">
-  <div class="ws-grid">
+  <div class="ws">
 
-    <!-- LEFT: prompt -->
-    <div class="ws-col">
-      <div class="ws-section">
-        <div class="ws-title" id="title"></div>
-        <div class="ws-meta" id="meta"></div>
-        <pre id="prompt" style="margin:0"></pre>
-      </div>
-      <div class="ws-section">
-        <div class="ws-label">Constraints</div>
-        <div class="mut" id="constraints" style="font-size:12.5px;line-height:1.7"></div>
-      </div>
-      <div class="ws-section">
-        <div class="ws-label">Prerequisites</div>
-        <div id="prereqs"></div>
-      </div>
-      <div class="ws-section">
-        <div class="ws-label">Visible Tests</div>
-        <div id="vtests" class="mut" style="font-size:12.5px;line-height:1.7"></div>
-      </div>
+    <!-- LEFT -->
+    <div class="ws-left">
+      <div class="ws-challenge-title" id="title"></div>
+      <div class="ws-challenge-meta" id="meta"></div>
+
+      <div class="ws-sec-title">Problem</div>
+      <div class="ws-problem-box" id="prompt"></div>
+
+      <div class="ws-sec-title">Constraints</div>
+      <ul class="ws-constraint-list" id="constraints"></ul>
+
+      <div class="ws-sec-title">Prerequisites</div>
+      <div id="prereqs"></div>
     </div>
 
-    <!-- CENTER: editor -->
-    <div class="ws-col" style="padding:16px 18px;">
-      <textarea id="code" spellcheck="false"></textarea>
-      <div class="btn-row">
-        <button class="primary" id="btnRun">Run</button>
-        <button class="primary" id="btnSubmit">Submit</button>
-        <button id="btnHint">Hint</button>
-        <button id="btnIdk">I don't know this yet</button>
-        <button id="btnSol">Solution</button>
-        <button id="btnReset">Reset</button>
-      </div>
-      <div id="hintBox" class="mut" style="font-size:12.5px"></div>
-
-      <div id="result" class="mut" style="font-size:13px;margin-top:12px">Run or submit to see results.</div>
-
-      <!-- Prerequisite recovery -->
-      <div id="prep" class="hidden" style="margin-top:16px;">
-        <div class="ws-label" id="capTitle">Concept Capsule</div>
-        <div class="mut" id="capMeta" style="font-size:12px;margin-bottom:8px"></div>
-        <pre id="capSummary"></pre>
-        <div id="capObjectives" class="mut" style="margin-top:8px;font-size:12.5px;line-height:1.7"></div>
-
-        <div class="ws-label" style="margin-top:16px">Executable Example</div>
-        <textarea id="capExample" spellcheck="false"></textarea>
-        <div class="btn-row"><button id="btnRunExample" class="primary">Run example</button></div>
-        <pre id="exampleOut" class="mut">—</pre>
-
-        <div class="ws-label" style="margin-top:16px">Common Mistakes</div>
-        <div id="capMistakes" class="mut" style="font-size:12.5px;line-height:1.7"></div>
-
-        <div class="ws-label" style="margin-top:16px" id="warmTitle">Warm-up</div>
-        <pre id="warmPrompt" class="plain mut"></pre>
-        <textarea id="warmCode" spellcheck="false"></textarea>
-        <div class="btn-row">
-          <button id="btnRunWarm" class="primary">Run warm-up</button>
-          <button id="btnReturn" disabled>Return to challenge</button>
+    <!-- CENTER -->
+    <div class="ws-center">
+      <div class="ws-file-tabs">
+        <div class="ws-file-tab">
+          <div class="py-icon">Py</div>
+          <span>solution.py</span>
+          <span class="ws-file-tab-close">&times;</span>
         </div>
-        <div id="warmOut" class="mut" style="font-size:12.5px"></div>
+        <div class="ws-tab-plus">+</div>
+        <div class="ws-tab-spacer"></div>
+        <div class="ws-tab-action">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <div class="ws-tab-action">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+        </div>
+      </div>
 
-        <div class="ws-label" style="margin-top:16px">Sources</div>
-        <div id="capSources" class="mut" style="font-size:12.5px;line-height:1.9"></div>
+      <div class="ws-editor-area">
+        <textarea id="code" spellcheck="false"></textarea>
+        <div class="ws-btn-row">
+          <button class="ws-btn run" id="btnRun">
+            <svg class="ico ico-sm" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M8 5v14l11-7z"/></svg>
+            Run
+          </button>
+          <button class="ws-btn submit" id="btnSubmit">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            Submit
+          </button>
+          <button class="ws-btn" id="btnHint">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            Hint
+          </button>
+          <button class="ws-btn" id="btnIdk">I don't know this yet</button>
+          <button class="ws-btn" id="btnSol">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M8 9l3 3-3 3m5 0h3"/></svg>
+            Solution
+          </button>
+          <button class="ws-btn" id="btnReset">Reset</button>
+        </div>
+        <div id="hintBox" style="font-size:12.5px;color:var(--muted)"></div>
+
+        <div id="result" style="font-size:13px;margin-top:16px;color:var(--muted)">Run or submit to see results.</div>
+
+        <!-- Capsule / warm-up recovery -->
+        <div id="prep" class="hidden" style="margin-top:20px;">
+          <h2 id="capTitle">Concept Capsule</h2>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px" id="capMeta"></div>
+          <pre id="capSummary"></pre>
+          <div id="capObjectives" style="margin-top:8px;font-size:12.5px;line-height:1.7;color:var(--muted)"></div>
+
+          <h2>Executable Example</h2>
+          <textarea id="capExample" spellcheck="false"></textarea>
+          <div class="ws-btn-row"><button class="ws-btn run" id="btnRunExample">Run example</button></div>
+          <pre id="exampleOut" style="color:var(--muted)">—</pre>
+
+          <h2>Common Mistakes</h2>
+          <div id="capMistakes" style="font-size:12.5px;line-height:1.7;color:var(--muted)"></div>
+
+          <h2 id="warmTitle">Warm-up</h2>
+          <pre id="warmPrompt" class="plain" style="color:var(--muted)"></pre>
+          <textarea id="warmCode" spellcheck="false"></textarea>
+          <div class="ws-btn-row">
+            <button class="ws-btn run" id="btnRunWarm">Run warm-up</button>
+            <button class="ws-btn" id="btnReturn" disabled>Return to challenge</button>
+          </div>
+          <div id="warmOut" style="font-size:12.5px;color:var(--muted)"></div>
+
+          <h2>Sources</h2>
+          <div id="capSources" style="font-size:12.5px;line-height:1.9;color:var(--muted)"></div>
+        </div>
       </div>
     </div>
 
-    <!-- RIGHT: inspector + progress -->
-    <div class="ws-col">
-      <div class="ws-section">
-        <div class="ws-label">Tensor Inspector</div>
-        <div id="inspector" class="mut">Run to inspect output.</div>
+    <!-- RIGHT -->
+    <div class="ws-right">
+      <div class="ws-r-section">
+        <div class="ws-r-title">Tensor Inspector</div>
+        <div id="inspector" style="color:var(--muted);font-size:12.5px">Run to inspect output.</div>
       </div>
-      <div class="ws-section">
-        <div class="ws-label">Next Action</div>
-        <div id="next" class="mut">—</div>
+      <div class="ws-r-section">
+        <div class="ws-r-title">Next Action</div>
+        <div id="next" style="color:var(--muted);font-size:12.5px">—</div>
       </div>
-      <div class="ws-section">
-        <div class="ws-label">Mastery</div>
-        <div id="mastery" class="mut">—</div>
+      <div class="ws-r-section">
+        <div class="ws-r-title">Mastery</div>
+        <div id="mastery" style="color:var(--muted);font-size:12.5px">—</div>
       </div>
-      <div class="ws-section">
-        <div class="ws-label">History</div>
-        <div id="history" class="mut">—</div>
+      <div class="ws-r-section">
+        <div class="ws-r-title">History</div>
+        <div id="history" style="color:var(--muted);font-size:12.5px">—</div>
       </div>
     </div>
 
@@ -408,8 +564,7 @@
 let CHALLENGE = "tensor-row-normalize-001";
 const $ = id => document.getElementById(id);
 const api = (p, opt) => fetch(p, opt).then(r => r.json());
-let CAP = null, WARM = null;
-let ALL_CHALLENGES = [];
+let CAP = null, WARM = null, ALL_CHALLENGES = [];
 
 const cmOpts = () => ({
   mode: "python", theme: "dracula", lineNumbers: true,
@@ -424,101 +579,101 @@ editor.getWrapperElement().id    = "cm-code";
 capEditor.getWrapperElement().id = "cm-cap";
 warmEditor.getWrapperElement().id= "cm-warm";
 
+const SVG_CHECK = `<svg class="ico ico-sm" viewBox="0 0 24 24" style="color:var(--green)"><path d="M5 13l4 4L19 7"/></svg>`;
+const SVG_X     = `<svg class="ico ico-sm" viewBox="0 0 24 24" style="color:var(--red)"><path d="M6 18L18 6M6 6l12 12"/></svg>`;
+const SVG_FOLDER= `<svg class="ico" viewBox="0 0 24 24" style="color:var(--muted)"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>`;
+const SVG_CHEV  = `<svg class="ico ico-sm rm-group-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>`;
+
 /* ── View switching ── */
 function showView(v){
-  const isRoadmap = v === "roadmap";
-  $("roadmapView").classList.toggle("hide", !isRoadmap);
-  $("workspaceView").classList.toggle("active", !isRoadmap);
-  $("navRoadmap").classList.toggle("active", isRoadmap);
-  $("navWorkspace").classList.toggle("active", !isRoadmap);
-  if(!isRoadmap) setTimeout(()=> editor.refresh(), 0);
+  const r = v === "roadmap";
+  $("roadmapView").classList.toggle("hide", !r);
+  $("workspaceView").classList.toggle("active", !r);
+  $("navRoadmap").classList.toggle("active", r);
+  $("navWorkspace").classList.toggle("active", !r);
+  if(!r) setTimeout(()=> editor.refresh(), 0);
 }
 
-/* ── Roadmap categories with curated order ── */
+/* ── Roadmap ── */
 const CATEGORIES = [
-  { key: "tensor", label: "Tensor & Shape", order: [
-    "tensor-create-zeros-001",
-    "tensor-reshape-flat-001",
-    "tensor-transpose-dims-001",
-    "tensor-broadcasting-add-001",
-    "tensor-row-normalize-001",
-    "tensor-col-normalize-001",
-    "tensor-outer-product-001",
-    "tensor-stack-batch-001",
-    "tensor-one-hot-001",
-    "tensor-fancy-index-001",
+  { key:"tensor", label:"Tensor & Shape", order:[
+    "tensor-create-zeros-001","tensor-reshape-flat-001","tensor-transpose-dims-001",
+    "tensor-broadcasting-add-001","tensor-row-normalize-001","tensor-col-normalize-001",
+    "tensor-outer-product-001","tensor-stack-batch-001","tensor-one-hot-001","tensor-fancy-index-001",
   ]},
-  { key: "autograd", label: "Autograd", order: [
-    "autograd-gradient-001",
-    "autograd-no-grad-001",
-    "autograd-detach-clone-001",
-    "autograd-chain-001",
-    "autograd-accumulate-001",
-    "autograd-higher-order-001",
+  { key:"autograd", label:"Autograd", order:[
+    "autograd-gradient-001","autograd-no-grad-001","autograd-detach-clone-001",
+    "autograd-chain-001","autograd-accumulate-001","autograd-higher-order-001",
   ]},
-  { key: "nn", label: "nn.Module & Training", order: [
-    "nn-param-count-001",
-    "nn-train-eval-toggle-001",
-    "nn-linear-module-001",
-    "nn-training-step-001",
-    "nn-custom-loss-001",
-    "nn-skip-connection-001",
+  { key:"nn", label:"nn.Module & Training", order:[
+    "nn-param-count-001","nn-train-eval-toggle-001","nn-linear-module-001",
+    "nn-training-step-001","nn-custom-loss-001","nn-skip-connection-001",
   ]},
-  { key: "debug", label: "Debugging", order: [
-    "debug-shape-mismatch-001",
-    "debug-wrong-reduction-001",
-    "debug-missing-grad-001",
-    "debug-inplace-error-001",
+  { key:"debug", label:"Debugging", order:[
+    "debug-shape-mismatch-001","debug-wrong-reduction-001",
+    "debug-missing-grad-001","debug-inplace-error-001",
   ]},
-  { key: "perf", label: "Performance", order: [
-    "perf-vectorize-001",
-    "perf-view-vs-copy-001",
-    "perf-batch-matmul-001",
-    "perf-memory-001",
+  { key:"perf", label:"Performance", order:[
+    "perf-vectorize-001","perf-view-vs-copy-001",
+    "perf-batch-matmul-001","perf-memory-001",
   ]},
 ];
 
 function renderRoadmap(){
-  const list = $("roadmapList");
-  list.innerHTML = "";
-  const byId = {};
-  for(const c of ALL_CHALLENGES) byId[c.id] = c;
+  const list = $("roadmapList"); list.innerHTML = "";
+  const byId = {}; for(const c of ALL_CHALLENGES) byId[c.id] = c;
+  const easy = ALL_CHALLENGES.filter(c=>c.difficulty==="easy").length;
+  const med  = ALL_CHALLENGES.filter(c=>c.difficulty==="medium").length;
+  const hard = ALL_CHALLENGES.filter(c=>c.difficulty==="hard").length;
 
-  const total = ALL_CHALLENGES.length;
   $("roadmapStats").innerHTML =
-    `<div class="stat-block"><span class="stat-val">${total}</span><span class="stat-label">problems</span></div>`+
-    `<div class="stat-block"><span class="stat-val">5</span><span class="stat-label">categories</span></div>`+
-    `<div class="stat-block"><span class="stat-val">${ALL_CHALLENGES.filter(c=>c.difficulty==="easy").length}</span><span class="stat-label">easy</span></div>`+
-    `<div class="stat-block"><span class="stat-val">${ALL_CHALLENGES.filter(c=>c.difficulty==="medium").length}</span><span class="stat-label">medium</span></div>`+
-    `<div class="stat-block"><span class="stat-val">${ALL_CHALLENGES.filter(c=>c.difficulty==="hard").length}</span><span class="stat-label">hard</span></div>`;
+    `<div class="rm-stat"><div class="rm-stat-val">${ALL_CHALLENGES.length}</div><div class="rm-stat-lbl">problems</div></div>`+
+    `<div class="rm-stat"><div class="rm-stat-val">${CATEGORIES.length}</div><div class="rm-stat-lbl">categories</div></div>`+
+    `<div class="rm-stat"><div class="rm-stat-val">${easy}</div><div class="rm-stat-lbl"><span class="rm-stat-dot" style="background:var(--green-s)"></span> easy</div></div>`+
+    `<div class="rm-stat"><div class="rm-stat-val">${med}</div><div class="rm-stat-lbl"><span class="rm-stat-dot" style="background:var(--amber)"></span> medium</div></div>`+
+    `<div class="rm-stat"><div class="rm-stat-val">${hard}</div><div class="rm-stat-lbl"><span class="rm-stat-dot" style="background:var(--red)"></span> hard</div></div>`;
 
   for(const cat of CATEGORIES){
-    const ordered = cat.order.map(id => byId[id]).filter(Boolean);
-    if(!ordered.length) continue;
+    const items = cat.order.map(id => byId[id]).filter(Boolean);
+    if(!items.length) continue;
 
     const grp = document.createElement("div");
-    grp.className = "topic-group";
-    grp.innerHTML = `<div class="topic-label">${cat.label} <span style="color:var(--subtle);font-weight:400;text-transform:none;letter-spacing:0">${ordered.length} problems</span></div>`;
+    grp.className = "rm-group";
 
-    ordered.forEach((c, i) => {
+    const head = document.createElement("div");
+    head.className = "rm-group-head";
+    head.innerHTML = `${SVG_FOLDER}<span class="rm-group-title">${cat.label} <span class="rm-group-count">— ${items.length} problems</span></span>${SVG_CHEV}`;
+
+    const body = document.createElement("div");
+    body.className = "rm-group-body";
+
+    head.onclick = () => {
+      body.classList.toggle("collapsed");
+      head.querySelector(".rm-group-chevron").classList.toggle("collapsed");
+    };
+
+    items.forEach((c, i) => {
       const row = document.createElement("div");
-      row.className = "problem-row";
+      row.className = "rm-row";
       row.innerHTML =
-        `<div class="problem-status" title="not attempted"><span style="font-size:9px;color:var(--subtle)">${i+1}</span></div>`+
-        `<span class="problem-title">${c.title}</span>`+
-        `<span class="diff-dot ${c.difficulty}" title="${c.difficulty}"></span>`+
-        `<span class="problem-time">~${c.estimated_minutes}m</span>`;
+        `<div class="rm-num">${i+1}</div>`+
+        `<span class="rm-problem-name">${c.title}</span>`+
+        `<span class="rm-diff ${c.difficulty}"></span>`+
+        `<span class="rm-time">~${c.estimated_minutes}m</span>`;
       row.onclick = () => {
         CHALLENGE = c.id;
         showView("workspace");
         hintLevel = -1;
         $("hintBox").innerHTML = "";
-        $("result").textContent = "Run or submit to see results.";
+        $("result").innerHTML = '<span style="color:var(--muted)">Run or submit to see results.</span>';
         $("prep").classList.add("hidden");
         loadChallenge();
       };
-      grp.appendChild(row);
+      body.appendChild(row);
     });
+
+    grp.appendChild(head);
+    grp.appendChild(body);
     list.appendChild(grp);
   }
 }
@@ -526,8 +681,7 @@ function renderRoadmap(){
 /* ── Boot ── */
 async function boot(){
   const h = await api("/api/health");
-  $("env").textContent = `PyTorch ${h.pinned.pytorch} · Python ${h.pinned.python}`;
-
+  $("env").textContent = `Env: local (PyTorch ${h.pinned.pytorch})`;
   const data = await api("/api/challenges");
   ALL_CHALLENGES = data.challenges || [];
   renderRoadmap();
@@ -536,13 +690,13 @@ async function boot(){
 async function loadChallenge(){
   const c = await api(`/api/challenges/${CHALLENGE}`);
   $("title").textContent = c.title;
-  const diffCls = c.difficulty==="easy"?"ok":(c.difficulty==="hard"?"bad":"warn");
-  $("meta").innerHTML = `<span class="${diffCls}" style="font-weight:500">${c.difficulty}</span> · ~${c.estimated_minutes} min`;
+  $("meta").textContent = `${c.difficulty} · ~${c.estimated_minutes} min`;
   $("prompt").textContent = c.prompt;
-  $("constraints").innerHTML = c.constraints.map(x=>"<div style='margin:2px 0'>· "+x+"</div>").join("");
-  $("prereqs").innerHTML = c.prerequisites.map(p =>
-    `<div class="chk"><span>${p.id}</span><span class="${p.status==='known'?'ok':'warn'}">${p.status==='known'?'known':'unknown'}</span></div>`).join("");
-  $("vtests").innerHTML = c.visible_tests.map(t=>`<div style="margin:3px 0"><span style="color:var(--ink)">${t.name}</span> <span class="mut">— ${t.description||''}</span></div>`).join("");
+  $("constraints").innerHTML = c.constraints.map(x=>`<li>${x}</li>`).join("");
+  $("prereqs").innerHTML = c.prerequisites.map(p => {
+    const known = p.status === "known";
+    return `<div class="ws-prereq"><div class="ws-prereq-icon${known?'':' unknown'}">${known?'✓':'?'}</div><span>${p.id}</span></div>`;
+  }).join("");
   editor.setValue(c.editor_code);
   window.__starter = c.starter_code;
   renderHistory(c.attempts);
@@ -552,65 +706,78 @@ async function loadChallenge(){
 
 function renderFeedback(d){
   if(!d.ok){
-    $("result").innerHTML = `<span class="bad">Execution error</span> ${d.execution_error||''} ${d.timed_out?'(timed out)':''}<pre>${d.stderr||''}</pre>`;
+    $("result").innerHTML = `<div class="result-status" style="color:var(--red)">${SVG_X} Execution error</div><pre>${d.execution_error||''} ${d.timed_out?'(timed out)':''}\n${d.stderr||''}</pre>`;
     return;
   }
   const f = d.feedback;
-  const cls = f.status==="passed"?"ok":(f.status==="error"?"bad":"warn");
-  let html = `<div class="${cls}" style="font-weight:600;margin-bottom:8px">${f.status === "passed" ? "Passed" : "Failed"} — ${f.summary}</div>`;
+  const passed = f.status === "passed";
+  let html = `<div class="result-status" style="color:${passed?'var(--green)':'var(--red)'}">${passed?SVG_CHECK:SVG_X} ${passed?'PASSED':'FAILED'} — ${f.summary}</div>`;
   if(f.observations && f.observations.length)
-    html += `<h2>What happened</h2>` + f.observations.map(o=>`<div style="margin:2px 0">· ${o}</div>`).join("");
+    html += f.observations.map(o=>`<div style="margin:2px 0;font-size:12.5px;color:var(--ink)">· ${o}</div>`).join("");
   if(f.concept) html += `<div style="margin-top:8px"><span class="tag">concept</span>${f.concept}</div>`;
   if(f.inspect) html += `<div style="margin-top:4px"><span class="tag">inspect</span>${f.inspect}</div>`;
   if(f.next_step) html += `<div style="margin-top:4px"><span class="tag">next</span>${f.next_step}</div>`;
-  if(f.mistake_category) html += `<div style="margin-top:6px;font-size:11px" class="mut">taxonomy: ${f.mistake_category}</div>`;
   const all = (f.visible_results||[]).concat(f.hidden_results||[]);
-  html += `<h2>Checks ${f.passed_count}/${f.total_count}</h2>` + all.map(c=>
-    `<div class="chk"><span>${c.visibility==='hidden'?'hidden · ':''}${c.name}</span><span class="${c.passed?'ok':'bad'}">${c.passed?'pass':'fail'}</span></div>`).join("");
+  html += `<div style="margin-top:12px">`;
+  html += all.map(c=>
+    `<div class="chk-row">${c.passed?SVG_CHECK:SVG_X}<span class="chk-name">${c.visibility==='hidden'?'<span style="color:var(--subtle)">hidden · </span>':''}${c.name}</span><span class="chk-badge ${c.passed?'pass':'fail'}">${c.passed?'pass':'fail'}</span></div>`
+  ).join("");
+  html += `</div>`;
   $("result").innerHTML = html;
   renderInspector(d.metadata);
   renderNext(d.next_action);
   if(d.mastery_update && Object.keys(d.mastery_update).length)
-    $("result").innerHTML += `<div class="ok" style="margin-top:8px;font-weight:500">Mastery updated: ${JSON.stringify(d.mastery_update)}</div>`;
+    $("result").innerHTML += `<div style="margin-top:8px;font-weight:500;color:var(--green)">Mastery updated</div>`;
   refreshProgress();
 }
 
 function renderInspector(m){
-  if(!m){ $("inspector").textContent="—"; return; }
-  if(m.error){ $("inspector").innerHTML=`<span class="bad">${m.error.type}: ${m.error.message}</span>`; return; }
-  const rows=[["shape",JSON.stringify(m.shape)],["rank",m.rank],["dtype",m.dtype],["device",m.device],
-    ["requires_grad",m.requires_grad],["grad_fn",m.grad_fn],["contiguous",m.is_contiguous],
-    ["numel",m.numel],["nbytes",m.nbytes+" B"]];
-  $("inspector").innerHTML=`<div class="kvs">`+rows.map(([k,v])=>`<span>${k}</span><span>${v}</span>`).join("")+`</div>`;
+  if(!m){ $("inspector").innerHTML='<span style="color:var(--muted)">—</span>'; return; }
+  if(m.error){ $("inspector").innerHTML=`<span style="color:var(--red)">${m.error.type}: ${m.error.message}</span>`; return; }
+  const rows=[["Shape",JSON.stringify(m.shape)],["Rank",m.rank],["Dtype",m.dtype],["Device",m.device],
+    ["Requires Grad",m.requires_grad],["Grad Fn",m.grad_fn||"None"],["Contiguous",m.is_contiguous],
+    ["Numel",m.numel],["Bytes",m.nbytes+" B"]];
+  $("inspector").innerHTML=`<table class="insp-table">`+rows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join("")+`</table>`;
 }
 
-function renderNext(n){ $("next").innerHTML=n?`<div style="font-weight:500;color:var(--ink-h)">${n.title}</div><div class="mut" style="font-size:12px;margin-top:2px">${n.detail}</div>`:"—"; }
+function renderNext(n){
+  $("next").innerHTML = n
+    ? `<div style="display:flex;gap:10px;align-items:flex-start"><svg class="ico" viewBox="0 0 24 24" style="color:var(--accent);flex-shrink:0;margin-top:2px"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div><div style="font-weight:600;color:var(--ink-h);font-size:12.5px">${n.title}</div><div style="color:var(--accent);font-size:12px;margin-top:2px">${n.detail}</div></div></div>`
+    : '<span style="color:var(--muted)">—</span>';
+}
 
 function renderHistory(h){
-  $("history").innerHTML=(h&&h.length)?h.slice(-6).map(a=>
-    `<div class="chk"><span>${a.kind}${a.hints_used?' · '+a.hints_used+'h':''}</span><span class="${a.passed?'ok':'bad'}">${a.passed?'pass':'fail'}</span></div>`).join(""):"—";
+  if(!h || !h.length){ $("history").innerHTML='<span style="color:var(--muted)">—</span>'; return; }
+  $("history").innerHTML = h.slice(-6).reverse().map(a => {
+    const p = a.passed;
+    return `<div class="hist-row"><span class="hist-icon" style="background:${p?'var(--green)':'var(--red)'}"></span><span class="hist-label" style="color:${p?'var(--green)':'var(--red)'}">${p?'PASSED':'FAILED'}</span><span class="hist-time">${a.hints_used?a.hints_used+' hints':''}</span><span class="hist-chev">›</span></div>`;
+  }).join("");
 }
 
 async function refreshProgress(){
   const p = await api(`/api/progress?challenge_id=${CHALLENGE}`);
   const keys = Object.keys(p.mastery||{});
-  $("mastery").innerHTML=keys.length?keys.map(k=>{
-    const v=Math.round(p.mastery[k]*100);
-    return `<div style="margin-bottom:4px"><span style="font-size:12px">${k}</span> <span class="mut" style="font-size:11px">${v}%</span><div class="bar"><span style="width:${v}%"></span></div></div>`;
-  }).join(""):"no mastery yet";
+  if(keys.length){
+    $("mastery").innerHTML = keys.map(k => {
+      const v = Math.round(p.mastery[k]*100);
+      return `<div class="mastery-row"><div class="mastery-label"><span>${k}</span><span>${v}%</span></div><div class="mastery-track"><div class="mastery-fill" style="width:${v}%"></div></div></div>`;
+    }).join("");
+  } else {
+    $("mastery").innerHTML = '<span style="color:var(--muted)">no mastery yet</span>';
+  }
   if(p.attempts) renderHistory(p.attempts);
 }
 
 /* ── Actions ── */
-$("btnRun").onclick = async ()=>{ $("result").textContent="running…";
+$("btnRun").onclick = async ()=>{ $("result").innerHTML='<span style="color:var(--muted)">running…</span>';
   renderFeedback(await api(`/api/challenges/${CHALLENGE}/run`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:editor.getValue()})})); };
-$("btnSubmit").onclick = async ()=>{ $("result").textContent="submitting…";
+$("btnSubmit").onclick = async ()=>{ $("result").innerHTML='<span style="color:var(--muted)">submitting…</span>';
   renderFeedback(await api(`/api/challenges/${CHALLENGE}/submit`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:editor.getValue()})})); };
 
 let hintLevel=-1;
 $("btnHint").onclick = async ()=>{ hintLevel++;
   const h=await api(`/api/challenges/${CHALLENGE}/hint?level=${hintLevel}`,{method:"POST"});
-  if(h.detail){ $("hintBox").innerHTML=`<span class="warn">No more hints.</span>`; hintLevel=h.max_level??hintLevel; return; }
+  if(h.detail){ $("hintBox").innerHTML=`<span style="color:var(--amber)">No more hints.</span>`; hintLevel=h.max_level??hintLevel; return; }
   $("hintBox").innerHTML+=`<div style="margin-top:6px"><span class="tag">L${h.level}</span>${h.text}</div>`; };
 
 $("btnSol").onclick = async ()=>{
@@ -632,7 +799,7 @@ async function openCapsule(capId, warmId){
   $("capObjectives").innerHTML="<b>Objectives</b><br>"+CAP.learning_objectives.map(o=>"· "+o).join("<br>");
   capEditor.setValue(CAP.example_code);
   $("capMistakes").innerHTML=CAP.common_mistakes.map(m=>"· "+m).join("<br>");
-  $("capSources").innerHTML=CAP.sources.map(s=>`· <a href="${s.url}" target="_blank">${s.title}</a> <span class="mut">(v${s.documentation_version})</span>`).join("<br>");
+  $("capSources").innerHTML=CAP.sources.map(s=>`· <a href="${s.url}" target="_blank">${s.title}</a> <span style="color:var(--muted)">(v${s.documentation_version})</span>`).join("<br>");
   WARM=await api(`/api/warmups/${warmId}`);
   $("warmTitle").textContent="Warm-up — "+WARM.title;
   $("warmPrompt").textContent=WARM.prompt;
@@ -652,8 +819,8 @@ $("btnRunWarm").onclick = async ()=>{ $("warmOut").textContent="running…";
   const r=await api(`/api/warmups/${WARM.id}/run`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:warmEditor.getValue()})});
   if(!r.ok){ $("warmOut").textContent="error: "+r.execution_error; return; }
   $("warmOut").innerHTML=r.checks.map(c=>
-    `<div class="chk"><span>${c.name}</span><span class="${c.passed?'ok':'bad'}">${c.passed?'pass':'fail'}: ${c.detail||''}</span></div>`).join("")
-    +(r.completed?`<div class="ok" style="margin-top:8px;font-weight:500">Warm-up complete — you can return.</div>`:`<div class="warn" style="margin-top:8px">Pass all checks to unlock return.</div>`);
+    `<div class="chk-row">${c.passed?SVG_CHECK:SVG_X}<span class="chk-name">${c.name}</span><span class="chk-badge ${c.passed?'pass':'fail'}">${c.passed?'pass':'fail'}: ${c.detail||''}</span></div>`).join("")
+    +(r.completed?`<div style="margin-top:8px;font-weight:500;color:var(--green)">Warm-up complete — you can return.</div>`:`<div style="margin-top:8px;color:var(--amber)">Pass all checks to unlock return.</div>`);
   $("btnReturn").disabled=!r.completed; };
 
 $("btnReturn").onclick = async ()=>{ await loadChallenge(); $("hintBox").innerHTML=""; hintLevel=-1; };
