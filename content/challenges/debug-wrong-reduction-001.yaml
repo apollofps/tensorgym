@@ -1,0 +1,85 @@
+id: debug-wrong-reduction-001
+title: Fix the Wrong Reduction Dimension
+type: debugging
+difficulty: easy
+
+concepts_taught:
+  - debugging-reduction-dim
+concepts_tested:
+  - reduction-dimensions
+
+required_prerequisites:
+  - reduction-dimensions
+optional_prerequisites: []
+
+concept_capsules:
+  - reduction-dimensions-keepdim
+
+prompt: |
+  The code below computes column means instead of row means. Fix
+  `fix_row_mean(x)` so it returns the mean of each row as a tensor of
+  shape (N, 1).
+
+  The bug is in the dim argument.
+
+starter_code: |
+  import torch
+
+
+  def fix_row_mean(x: torch.Tensor) -> torch.Tensor:
+      # BUG: dim=0 gives column means, not row means
+      return x.mean(dim=0, keepdim=True)
+
+function_name: fix_row_mean
+
+constraints:
+  - Use keepdim=True so the result has shape (N, 1).
+
+visible_tests:
+  - name: basic-row-mean
+    description: "Row means of [[1,2,3],[4,5,6]] are [[2.0],[5.0]]."
+    kind: exact_allclose
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]]
+    params:
+      expected: [[2.0], [5.0]]
+  - name: output-shape
+    description: "Output must be (2, 1) for a (2, 3) input."
+    kind: expect_shape
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]]
+    params:
+      shape: [2, 1]
+
+hidden_test_file: tests/debug_wrong_reduction_001_hidden.py
+
+hints:
+  - level: 0
+    text: "dim=0 reduces down the columns. Which dim reduces across each row?"
+  - level: 1
+    text: "For per-row results, reduce along dim=1."
+  - level: 2
+    text: "Change dim=0 to dim=1."
+  - level: 3
+    text: "x.mean(dim=1, keepdim=True) gives shape (N, 1)."
+  - level: 4
+    text: "return x.mean(dim=1, keepdim=True)"
+
+solution_file: solutions/debug_wrong_reduction_001.py
+
+estimated_minutes: 6
+
+sources:
+  - torch-sum
+  - pytorch-broadcasting-semantics
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

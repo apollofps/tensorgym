@@ -1,0 +1,49 @@
+id: row-sums-keepdim-warmup
+title: "Warm-up: Row Sums That Keep Their Shape"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: reduction-dimensions-keepdim
+
+prompt: |
+  Return the sum of each row of `x`, but keep it as a column so the result has
+  shape (N, 1) instead of (N,). This is the building block you just learned.
+
+starter_code: |
+  import torch
+
+
+  def row_sums(x: torch.Tensor) -> torch.Tensor:
+      # x has shape (N, M). Return shape (N, 1): each row's sum, dimension kept.
+      pass
+
+function_name: row_sums
+
+constraints:
+  - Do not use Python loops.
+  - Output shape must be (N, 1).
+
+visible_tests:
+  - name: shape-is-N-by-1
+    description: "For a 2x3 input the result must have shape (2, 1)."
+    kind: expect_shape
+    input: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+    params:
+      shape: [2, 1]
+  - name: values-correct
+    description: "Row sums of [[1,2,3],[4,5,6]] are [[6],[15]]."
+    kind: exact_allclose
+    input: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+    params:
+      expected: [[6.0], [15.0]]
+
+solution_inline: |
+  return x.sum(dim=1, keepdim=True)
+
+sources:
+  - torch-sum
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

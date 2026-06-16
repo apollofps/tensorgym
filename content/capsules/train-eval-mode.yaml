@@ -1,0 +1,51 @@
+id: train-eval-mode
+title: Train Mode vs Eval Mode
+estimated_minutes: 4
+supported_pytorch_version: "2.12.0"
+summary: |
+  PyTorch modules have two modes: training and evaluation. You switch between
+  them with model.train() and model.eval(). Most layers behave identically in
+  both modes, but some — notably Dropout and BatchNorm — change their behaviour.
+
+  Dropout randomly zeroes elements during training (with probability p) to
+  prevent overfitting. In eval mode it becomes a no-op: all values pass through,
+  scaled so the expected output is the same. If you forget to call model.eval()
+  before inference, Dropout still drops values, producing noisier (and
+  non-deterministic) outputs.
+
+  BatchNorm uses per-batch statistics (mean, variance) during training and
+  updates running statistics. In eval mode it uses those stored running
+  statistics instead. Leaving the model in train mode during inference means
+  BatchNorm uses the current batch's statistics, which can be unreliable with
+  small batches.
+
+  Rule of thumb: call model.eval() before any inference or validation, and
+  model.train() before resuming training. Both calls return self, so you can
+  chain them.
+
+learning_objectives:
+  - Explain what model.train() and model.eval() do.
+  - Predict how Dropout output differs between modes.
+  - Know that eval mode makes Dropout deterministic.
+
+interactive_example: examples/train_eval_mode_example.py
+
+warmup_challenge_id: eval-mode-warmup
+
+common_mistakes:
+  - Forgetting to call model.eval() before inference, causing Dropout to randomly zero values.
+  - Forgetting to call model.train() when resuming training after validation.
+
+sources:
+  - torch-nn-train-eval
+  - torch-nn-dropout
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

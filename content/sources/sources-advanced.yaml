@@ -1,0 +1,87 @@
+# TensorGym source registry — advanced topics
+# Every entry was fetched and read this session. Do not add an entry you have not read.
+# Versions/behavior cross-checked against the pinned env (PyTorch 2.12.0) by the
+# verification suite (tests/test_content_verification.py).
+
+sources:
+  - id: torch-matmul
+    title: torch.matmul
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.matmul.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.matmul supports broadcasting batch dimensions."
+      - "For 2-D inputs, matmul is matrix multiplication."
+
+  - id: torch-mm
+    title: torch.mm
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.mm.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.mm performs matrix multiplication of two 2-D tensors."
+
+  - id: torch-bmm
+    title: torch.bmm
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.bmm.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.bmm performs batched matrix multiplication of 3-D tensors."
+
+  - id: torch-reshape
+    title: torch.reshape
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.reshape.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.reshape returns a tensor with the same data but different shape."
+
+  - id: torch-transpose
+    title: torch.transpose
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.transpose.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.transpose swaps two dimensions of a tensor."
+
+  - id: torch-stack
+    title: torch.stack
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.stack.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.stack concatenates tensors along a new dimension."
+
+  - id: torch-tensor-dtype
+    title: "Tensor Attributes - dtype"
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/tensor_attributes.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.Tensor has a dtype attribute representing its data type."
+      - "Common dtypes include float32, float64, int32, int64, bool."
+
+  - id: torch-tensor-device
+    title: "Tensor Attributes - device"
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/tensor_attributes.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.Tensor has a device attribute indicating CPU or CUDA."

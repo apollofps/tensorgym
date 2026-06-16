@@ -1,0 +1,85 @@
+id: tensor-col-normalize-001
+title: Normalize Each Column
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - column-wise-normalization
+concepts_tested:
+  - reduction-dimensions
+  - broadcasting
+
+required_prerequisites:
+  - reduction-dimensions
+optional_prerequisites:
+  - broadcasting
+
+concept_capsules:
+  - reduction-dimensions-keepdim
+
+prompt: |
+  Implement `normalize_cols(x)` so that every column of the 2-D tensor `x` sums to 1.
+
+  Each output column must be the corresponding input column divided by that column's sum.
+  You may assume every column sum is non-zero.
+
+  Do this with tensor operations only — no Python loops.
+
+starter_code: |
+  import torch
+
+
+  def normalize_cols(x: torch.Tensor) -> torch.Tensor:
+      # x has shape (N, M). Return a tensor of the same shape where
+      # each column sums to 1. No Python loops.
+      pass
+
+function_name: normalize_cols
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Output shape must equal input shape.
+  - Each output column must sum to 1.
+
+visible_tests:
+  - name: two-by-three
+    description: A simple 2x3 matrix; each column should sum to 1.
+    kind: cols_sum_to_one
+    input: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+  - name: keeps-shape
+    description: Output shape must match input shape (2x3).
+    kind: same_shape
+    input: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+
+hidden_test_file: tests/tensor_col_normalize_001_hidden.py
+
+hints:
+  - level: 0
+    text: A "column" runs down dimension 0; values within a column span different rows.
+  - level: 1
+    text: You need each column's total. Which reduction sums along dimension 0?
+  - level: 2
+    text: Sum along dim=0, but keep that dimension so the result has shape (1, M) and can broadcast back against (N, M).
+  - level: 3
+    text: "col_sums = x.sum(dim=0, keepdim=True)  # shape (1, M)  -- then divide."
+  - level: 4
+    text: "return x / x.sum(dim=0, keepdim=True)"
+
+solution_file: solutions/tensor_col_normalize_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-sum
+  - pytorch-broadcasting-semantics
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

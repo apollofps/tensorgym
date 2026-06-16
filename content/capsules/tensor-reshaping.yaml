@@ -1,0 +1,54 @@
+id: tensor-reshaping
+title: Reshaping Tensors
+estimated_minutes: 5
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  Reshaping changes a tensor's shape without changing its data. The total number
+  of elements (numel) must stay the same.
+
+  `x.reshape(new_shape)` returns a tensor with the desired shape. You can use -1
+  for one dimension to let PyTorch infer its size: `x.reshape(2, -1)` on a tensor
+  with 12 elements gives shape (2, 6).
+
+  `x.view(new_shape)` is similar but requires the tensor to be contiguous in
+  memory. If it is not, call `x.contiguous()` first or just use `reshape`, which
+  handles this automatically.
+
+  `x.transpose(dim0, dim1)` swaps two dimensions. For example, transposing a
+  (3, 4) matrix along dims 0 and 1 gives shape (4, 3). `x.permute(dims)`
+  rearranges all dimensions at once.
+
+  `x.flatten(start_dim, end_dim)` collapses a range of dimensions into one. By
+  default it flattens the entire tensor into 1-D. `x.flatten(1)` keeps the first
+  dimension and flattens the rest — a common pattern for converting image batches
+  of shape (B, C, H, W) into (B, C*H*W).
+
+learning_objectives:
+  - Reshape a tensor to a new shape using reshape or view.
+  - Use -1 to infer one dimension automatically.
+  - Swap or rearrange dimensions with transpose and permute.
+  - Flatten specific dimensions of a tensor.
+
+interactive_example: examples/tensor_reshaping_example.py
+
+warmup_challenge_id: flatten-batch-warmup
+
+common_mistakes:
+  - Using view on a non-contiguous tensor (raises a RuntimeError).
+  - Forgetting that transpose returns a view that shares storage — modifying it changes the original.
+  - Confusing flatten() (all dims) with flatten(1) (keep batch dim).
+
+sources:
+  - torch-reshape
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

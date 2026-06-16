@@ -1,0 +1,46 @@
+id: timing-warmup
+title: "Warm-up: Time a Matrix Multiply"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+parent_capsule: basic-profiling
+prompt: |
+  Given two matrices `a` and `b`, time how long torch.matmul(a, b) takes using
+  time.perf_counter(). Run the multiply once as a warm-up (discard the time),
+  then time 5 runs and return the median time in seconds as a Python float.
+starter_code: |
+  import time
+  import torch
+
+
+  def time_matmul(a: torch.Tensor, b: torch.Tensor) -> float:
+      # Warm up, then time 5 runs of torch.matmul(a, b).
+      # Return median time in seconds.
+      pass
+function_name: time_matmul
+constraints:
+  - Must include at least one warm-up run.
+  - Must return median of 5 timed runs.
+visible_tests:
+  - name: runs-without-error
+    description: "The function should execute and return a float."
+    kind: runs_without_error
+    input:
+      args: [[[1.0, 2.0], [3.0, 4.0]], [[5.0, 6.0], [7.0, 8.0]]]
+    params:
+      input_dtype: "float32"
+solution_inline: |
+  _ = torch.matmul(a, b)
+  times = []
+  for _ in range(5):
+      start = time.perf_counter()
+      _ = torch.matmul(a, b)
+      end = time.perf_counter()
+      times.append(end - start)
+  times.sort()
+  return times[len(times) // 2]
+sources:
+  - torch-utils-benchmark
+verification:
+  status: verified
+  verified_at: "2026-06-16"

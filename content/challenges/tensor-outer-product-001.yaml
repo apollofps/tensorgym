@@ -1,0 +1,91 @@
+id: tensor-outer-product-001
+title: Outer Product of Two Vectors
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - outer-product
+concepts_tested:
+  - tensor-operations
+  - broadcasting
+
+required_prerequisites:
+  - tensor-creation
+optional_prerequisites:
+  - broadcasting
+
+concept_capsules:
+  - broadcasting
+
+prompt: |
+  Implement `outer_product(a, b)` that computes the outer product of two 1-D vectors.
+
+  Given `a` of shape (N,) and `b` of shape (M,), return a tensor of shape (N, M)
+  where result[i][j] = a[i] * b[j].
+
+  Use tensor operations — no Python loops and do not use `torch.outer` directly.
+
+starter_code: |
+  import torch
+
+
+  def outer_product(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
+      # a has shape (N,), b has shape (M,).
+      # Return the outer product with shape (N, M).
+      pass
+
+function_name: outer_product
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Do not use torch.outer or torch.ger.
+  - Output shape must be (N, M).
+
+visible_tests:
+  - name: values-correct
+    description: The outer product of [1,2,3] and [4,5] should be [[4,5],[8,10],[12,15]].
+    kind: exact_allclose
+    input:
+      args: [[1.0, 2.0, 3.0], [4.0, 5.0]]
+    params:
+      expected: [[4.0, 5.0], [8.0, 10.0], [12.0, 15.0]]
+  - name: shape-correct
+    description: Output shape should be (3, 2) for inputs of length 3 and 2.
+    kind: expect_shape
+    input:
+      args: [[1.0, 2.0, 3.0], [4.0, 5.0]]
+    params:
+      shape: [3, 2]
+
+hidden_test_file: tests/tensor_outer_product_001_hidden.py
+
+hints:
+  - level: 0
+    text: The outer product pairs every element of a with every element of b.
+  - level: 1
+    text: If a has shape (N,) and b has shape (M,), you need to make them broadcastable.
+  - level: 2
+    text: Reshape a to (N, 1) and b stays (M,). Their product broadcasts to (N, M).
+  - level: 3
+    text: "a.unsqueeze(1) * b  # (N, 1) * (M,) -> (N, M)"
+  - level: 4
+    text: "return a.unsqueeze(1) * b"
+
+solution_file: solutions/tensor_outer_product_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-outer
+  - pytorch-broadcasting-semantics
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

@@ -1,0 +1,50 @@
+id: basic-profiling
+title: Basic Profiling and Timing
+estimated_minutes: 4
+supported_pytorch_version: "2.12.0"
+summary: |
+  Measuring how long PyTorch operations take is harder than it looks. A naive
+  approach — wrapping code in time.time() — works on CPU but gives misleading
+  results on GPU because CUDA operations are asynchronous. The CPU returns
+  immediately after launching a kernel, so time.time() only measures launch
+  overhead, not actual computation.
+
+  For CPU-only code, time.perf_counter() is a simple reliable timer. Use multiple
+  runs and report the median to reduce noise from OS scheduling. Always include
+  at least one warm-up iteration that you discard, because the first run may
+  include import overhead or JIT compilation.
+
+  For more rigorous measurement, torch.utils.benchmark.Timer handles warm-up,
+  multiple runs, and statistical reporting automatically. It returns a
+  Measurement object with .median, .mean, and other statistics.
+
+  Common anti-patterns: timing a single run, not warming up, calling
+  torch.cuda.synchronize() (needed for GPU timing but a no-op on CPU), and
+  including data creation in the timed section.
+
+learning_objectives:
+  - Measure CPU operation time with time.perf_counter().
+  - Understand why warm-up iterations are important for reliable timing.
+  - Know that GPU timing requires synchronization (not needed on CPU).
+
+interactive_example: examples/basic_profiling_example.py
+
+warmup_challenge_id: timing-warmup
+
+common_mistakes:
+  - Timing a single run instead of taking the median of multiple runs.
+  - Including tensor creation time in the timed operation.
+  - Not running warm-up iterations before timing.
+
+sources:
+  - torch-utils-benchmark
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

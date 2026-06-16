@@ -1,0 +1,58 @@
+id: nn-module-basics
+title: nn.Module Basics
+estimated_minutes: 5
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  Every neural network in PyTorch is built by subclassing `torch.nn.Module`.
+  This base class gives your model parameter tracking, device management,
+  serialization, and the ability to nest sub-modules automatically.
+
+  To create a model you override two methods. In `__init__` you register the
+  layers your network will use — for example `nn.Linear` (a fully connected
+  layer) or `nn.ReLU` (a non-linear activation). You must call
+  `super().__init__()` first so that `nn.Module` can set up its internal
+  bookkeeping. In `forward` you define the computation: take an input tensor,
+  pass it through the layers you registered, and return the result.
+
+  Once the model exists, calling `model.parameters()` returns an iterator over
+  every learnable weight and bias. This is how optimizers know what to update
+  during training. You can also call `model.named_parameters()` to see each
+  parameter's name alongside its tensor.
+
+  `nn.Linear(in_features, out_features)` applies y = xW^T + b. It creates a
+  weight matrix of shape (out_features, in_features) and a bias vector of shape
+  (out_features). `nn.ReLU()` applies the element-wise function max(0, x),
+  which introduces non-linearity between linear layers. Stacking linear layers
+  with activations in between is the foundation of deep learning.
+
+learning_objectives:
+  - Understand how to subclass nn.Module to build a custom model.
+  - Implement __init__ to register layers and forward to define computation.
+  - Use parameters() and named_parameters() to inspect learnable weights.
+  - Combine nn.Linear and nn.ReLU to build a multi-layer network.
+
+interactive_example: examples/nn_module_basics_example.py
+
+warmup_challenge_id: nn-module-warmup
+
+common_mistakes:
+  - Forgetting to call super().__init__() in __init__, causing nn.Module internals to be uninitialized.
+  - Defining layers inside forward instead of __init__, so they are recreated on every call and their parameters are not tracked.
+  - Storing a layer in __init__ but calling the raw function instead of self.layer() in forward.
+
+sources:
+  - torch-nn-module
+  - torch-nn-linear
+  - torch-nn-relu
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

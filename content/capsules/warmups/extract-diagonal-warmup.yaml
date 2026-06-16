@@ -1,0 +1,48 @@
+id: extract-diagonal-warmup
+title: "Warm-up: Extract the Diagonal"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: tensor-indexing
+
+prompt: |
+  Return the diagonal elements of a square matrix as a 1-D tensor.
+
+starter_code: |
+  import torch
+
+
+  def get_diagonal(x: torch.Tensor) -> torch.Tensor:
+      # x is a square 2-D tensor. Return its diagonal as a 1-D tensor.
+      pass
+
+function_name: get_diagonal
+
+constraints:
+  - Do not use Python loops.
+  - Output must be a 1-D tensor.
+
+visible_tests:
+  - name: values-correct
+    description: "Diagonal of [[1,2],[3,4]] is [1,4]."
+    kind: exact_allclose
+    input: [[1.0, 2.0], [3.0, 4.0]]
+    params:
+      expected: [1.0, 4.0]
+  - name: shape-is-1d
+    description: "Output shape must be (2,) for a 2x2 input."
+    kind: expect_shape
+    input: [[1.0, 2.0], [3.0, 4.0]]
+    params:
+      shape: [2]
+
+solution_inline: |
+  return torch.diagonal(x)
+
+sources:
+  - torch-tensor-indexing
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

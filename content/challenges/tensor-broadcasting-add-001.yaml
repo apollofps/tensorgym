@@ -1,0 +1,81 @@
+id: tensor-broadcasting-add-001
+title: Add Bias via Broadcasting
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - broadcasting-addition
+concepts_tested:
+  - broadcasting
+  - shape-compatibility
+
+required_prerequisites:
+  - broadcasting
+optional_prerequisites: []
+
+concept_capsules:
+  - broadcasting
+
+prompt: |
+  Implement `add_bias(matrix, bias)` that adds a 1-D bias vector to every row
+  of a 2-D matrix using broadcasting.
+
+  `matrix` has shape (N, M) and `bias` has shape (M,). The result must have
+  shape (N, M). Do not use Python loops.
+
+starter_code: |
+  import torch
+
+
+  def add_bias(matrix: torch.Tensor, bias: torch.Tensor) -> torch.Tensor:
+      # matrix has shape (N, M), bias has shape (M,).
+      # Return matrix + bias, broadcast across rows.
+      pass
+
+function_name: add_bias
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Use broadcasting — do not manually expand or repeat the bias.
+  - Output shape must equal the matrix shape.
+
+visible_tests:
+  - name: values-correct
+    description: "Adding [10,20,30] to [[1,2,3],[4,5,6]] gives [[11,22,33],[14,25,36]]."
+    kind: exact_allclose
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], [10.0, 20.0, 30.0]]
+    params:
+      expected: [[11.0, 22.0, 33.0], [14.0, 25.0, 36.0]]
+
+hidden_test_file: tests/tensor_broadcasting_add_001_hidden.py
+
+hints:
+  - level: 0
+    text: Broadcasting aligns shapes from the trailing dimension. (M,) lines up with the last dimension of (N, M).
+  - level: 1
+    text: When shapes are (N, M) and (M,), the (M,) tensor is padded to (1, M) and then broadcast to (N, M).
+  - level: 2
+    text: This means you can simply use the + operator.
+  - level: 3
+    text: "matrix + bias — PyTorch handles the broadcasting automatically."
+  - level: 4
+    text: "return matrix + bias"
+
+solution_file: solutions/tensor_broadcasting_add_001.py
+
+estimated_minutes: 5
+
+sources:
+  - pytorch-broadcasting-semantics
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

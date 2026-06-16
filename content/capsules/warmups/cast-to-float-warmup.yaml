@@ -1,0 +1,50 @@
+id: cast-to-float-warmup
+title: "Warm-up: Cast to Float"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: dtypes
+
+prompt: |
+  Cast the input integer tensor to float32 and return it. The shape must stay
+  the same - only the dtype should change.
+
+starter_code: |
+  import torch
+
+
+  def to_float(x: torch.Tensor) -> torch.Tensor:
+      # x is an integer tensor. Return it as float32.
+      pass
+
+function_name: to_float
+
+constraints:
+  - Output dtype must be torch.float32.
+  - Output shape must match input shape.
+
+visible_tests:
+  - name: dtype-is-float32
+    description: "The result must have dtype float32."
+    kind: expect_dtype
+    input: [[1, 2], [3, 4]]
+    params:
+      input_dtype: int64
+      dtype: float32
+  - name: shape-preserved
+    description: "Shape must stay the same as input."
+    kind: same_shape
+    input: [[1, 2], [3, 4]]
+    params:
+      input_dtype: int64
+
+solution_inline: |
+  return x.float()
+
+sources:
+  - torch-tensor-dtype
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

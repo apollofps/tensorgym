@@ -1,0 +1,102 @@
+id: tensor-stack-batch-001
+title: Stack Matrices Into a Batch
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - tensor-stacking
+concepts_tested:
+  - tensor-operations
+  - tensor-shapes
+
+required_prerequisites:
+  - tensor-creation
+  - tensor-shapes
+optional_prerequisites: []
+
+concept_capsules:
+  - tensor-shapes
+
+prompt: |
+  Implement `stack_batch(a, b, c)` that stacks three 2-D matrices into a single
+  batch tensor.
+
+  Given three matrices each of shape (H, W), return a tensor of shape (3, H, W) —
+  a batch of 3 matrices.
+
+  Use `torch.stack`.
+
+starter_code: |
+  import torch
+
+
+  def stack_batch(
+      a: torch.Tensor, b: torch.Tensor, c: torch.Tensor,
+  ) -> torch.Tensor:
+      # a, b, c each have shape (H, W).
+      # Return a tensor of shape (3, H, W).
+      pass
+
+function_name: stack_batch
+
+constraints:
+  - Use torch.stack.
+  - Do not use Python loops (for/while).
+  - Output shape must be (3, H, W).
+
+visible_tests:
+  - name: shape-correct
+    description: Three 2x2 matrices stacked should produce shape (3, 2, 2).
+    kind: expect_shape
+    input:
+      args:
+        - [[1.0, 2.0], [3.0, 4.0]]
+        - [[5.0, 6.0], [7.0, 8.0]]
+        - [[9.0, 10.0], [11.0, 12.0]]
+    params:
+      shape: [3, 2, 2]
+  - name: values-correct
+    description: Stacked tensor should preserve all original values.
+    kind: exact_allclose
+    input:
+      args:
+        - [[1.0, 2.0], [3.0, 4.0]]
+        - [[5.0, 6.0], [7.0, 8.0]]
+        - [[9.0, 10.0], [11.0, 12.0]]
+    params:
+      expected:
+        - [[1.0, 2.0], [3.0, 4.0]]
+        - [[5.0, 6.0], [7.0, 8.0]]
+        - [[9.0, 10.0], [11.0, 12.0]]
+
+hidden_test_file: tests/tensor_stack_batch_001_hidden.py
+
+hints:
+  - level: 0
+    text: torch.stack takes a sequence of tensors and a dim argument.
+  - level: 1
+    text: To create a batch dimension at position 0, stack along dim=0.
+  - level: 2
+    text: "torch.stack([a, b, c], dim=0)"
+  - level: 3
+    text: The default dim for torch.stack is 0, which is what we want.
+  - level: 4
+    text: "return torch.stack([a, b, c], dim=0)"
+
+solution_file: solutions/tensor_stack_batch_001.py
+
+estimated_minutes: 5
+
+sources:
+  - torch-stack
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

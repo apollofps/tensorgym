@@ -1,0 +1,89 @@
+id: debug-missing-grad-001
+title: Fix the Missing requires_grad
+type: debugging
+difficulty: easy
+
+concepts_taught:
+  - debugging-gradient-issues
+concepts_tested:
+  - autograd
+  - requires-grad
+
+required_prerequisites:
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - autograd-basics
+
+prompt: |
+  The code below tries to compute the gradient of x² but returns None
+  because the tensor doesn't track gradients. Fix `fix_gradient(x)` so it
+  correctly returns the gradient.
+
+  The bug: x is not cloned with requires_grad.
+
+starter_code: |
+  import torch
+
+
+  def fix_gradient(x: torch.Tensor) -> torch.Tensor:
+      # BUG: x does not have requires_grad=True, so backward does nothing
+      y = (x ** 2).sum()
+      y.backward()
+      return x.grad
+
+function_name: fix_gradient
+
+constraints:
+  - Use autograd (backward) to compute the gradient.
+  - Clone x before enabling requires_grad so the original tensor is not modified.
+
+visible_tests:
+  - name: basic-gradient
+    description: "Gradient of x² at [2.0, 3.0] is [4.0, 6.0]."
+    kind: exact_allclose
+    input:
+      args: [[2.0, 3.0]]
+    params:
+      expected: [4.0, 6.0]
+  - name: output-shape
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input:
+      args: [[2.0, 3.0]]
+    params:
+      shape: [2]
+
+hidden_test_file: tests/debug_missing_grad_001_hidden.py
+
+hints:
+  - level: 0
+    text: "The input tensor x doesn't track gradients. You need to enable it."
+  - level: 1
+    text: "Clone x and call requires_grad_(True) on the clone."
+  - level: 2
+    text: "x = x.clone().requires_grad_(True) before computing y."
+  - level: 3
+    text: "Then y = (x**2).sum(); y.backward() will populate x.grad."
+  - level: 4
+    text: "Add x = x.clone().requires_grad_(True) at the start."
+
+solution_file: solutions/debug_missing_grad_001.py
+
+estimated_minutes: 6
+
+sources:
+  - torch-autograd
+  - torch-tensor-grad
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

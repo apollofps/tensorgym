@@ -1,0 +1,82 @@
+id: autograd-no-grad-001
+title: Compute Without Tracking Gradients
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - no-grad-context
+concepts_tested:
+  - autograd
+  - no-grad
+
+required_prerequisites:
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - autograd-basics
+
+prompt: |
+  Implement `no_grad_add(x)` that computes x + x² inside a torch.no_grad() context.
+
+  The result should NOT have requires_grad=True even though x tracks gradients.
+  Clone x with requires_grad_(True), then compute inside no_grad, return the result.
+
+starter_code: |
+  import torch
+
+
+  def no_grad_add(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: no_grad_add
+
+constraints:
+  - The computation must happen inside a torch.no_grad() context manager.
+
+visible_tests:
+  - name: basic-values
+    description: "x + x² at [2.0, 3.0] gives [6.0, 12.0]."
+    kind: exact_allclose
+    input:
+      args: [[2.0, 3.0]]
+    params:
+      expected: [6.0, 12.0]
+  - name: no-grad-tracking
+    description: "Output must not require grad."
+    kind: expect_requires_grad
+    input:
+      args: [[2.0, 3.0]]
+    params:
+      requires_grad: false
+
+hidden_test_file: tests/autograd_no_grad_001_hidden.py
+
+hints:
+  - level: 0
+    text: "torch.no_grad() is a context manager that disables gradient tracking."
+  - level: 1
+    text: "Operations inside 'with torch.no_grad():' produce tensors with requires_grad=False."
+  - level: 2
+    text: "Clone x, set requires_grad_(True), then use 'with torch.no_grad():' for the computation."
+  - level: 3
+    text: "x = x.clone().requires_grad_(True); with torch.no_grad(): result = x + x**2; return result"
+
+solution_file: solutions/autograd_no_grad_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-no-grad
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

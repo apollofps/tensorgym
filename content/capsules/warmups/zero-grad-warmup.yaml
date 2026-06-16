@@ -1,0 +1,56 @@
+id: zero-grad-warmup
+title: "Warm-up: Zero the Gradient"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: gradient-accumulation
+
+prompt: |
+  Given a 1-D tensor `x`, compute `y = x * 3`, call backward, then zero the
+  gradient and return `x.grad`. The returned gradient should be all zeros because
+  you zeroed it after the backward pass. You will need to clone `x` with
+  requires_grad enabled first.
+
+starter_code: |
+  import torch
+
+
+  def grad_after_zero(x: torch.Tensor) -> torch.Tensor:
+      # x is a 1-D float32 tensor. Clone with requires_grad=True,
+      # compute y = x * 3, backward, zero the grad, return x.grad.
+      pass
+
+function_name: grad_after_zero
+
+constraints:
+  - Do not use Python loops.
+  - You must zero the gradient after backward.
+
+visible_tests:
+  - name: values-are-zero
+    description: "Gradient should be zeroed, so [0.0, 0.0] for any input."
+    kind: exact_allclose
+    input: [1.0, 2.0]
+    params:
+      expected: [0.0, 0.0]
+  - name: shape-is-correct
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input: [1.0, 2.0]
+    params:
+      shape: [2]
+
+solution_inline: |
+  x = x.clone().requires_grad_(True)
+  y = (x * 3).sum()
+  y.backward()
+  x.grad.zero_()
+  return x.grad
+
+sources:
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

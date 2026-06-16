@@ -1,0 +1,59 @@
+# TensorGym source registry — tensor basics
+# Every entry was fetched and read this session. Do not add an entry you have not read.
+# Versions/behavior cross-checked against the pinned env (PyTorch 2.12.0) by the
+# verification suite (tests/test_content_verification.py).
+
+sources:
+  - id: torch-tensor-creation
+    title: "torch — PyTorch tensor creation ops"
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/torch.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.zeros(*size, dtype=None) returns a tensor filled with zeros."
+      - "torch.ones(*size, dtype=None) returns a tensor filled with ones."
+      - "torch.rand(*size) returns a tensor with uniform random values in [0, 1)."
+      - "torch.arange(start, end, step) returns a 1-D tensor of evenly spaced values."
+      - "torch.linspace(start, end, steps) returns a 1-D tensor of evenly spaced values."
+      - "torch.tensor(data, dtype=None) creates a tensor from a Python list or ndarray."
+
+  - id: torch-tensor-shapes
+    title: "torch.Tensor.shape"
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.Tensor.shape.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "Tensor.shape is an alias for Tensor.size() and returns a torch.Size object."
+      - "Tensor.ndim returns the number of dimensions (rank) of the tensor."
+      - "Tensor.numel() returns the total number of elements in the tensor."
+
+  - id: torch-tensor-indexing
+    title: "torch.Tensor indexing"
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/notes/indexing.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "Basic indexing with integers and slices follows NumPy conventions."
+      - "Boolean indexing selects elements where the mask is True."
+      - "Advanced (fancy) indexing with integer tensors gathers elements at the given indices."
+      - "torch.diagonal(input) returns the diagonal elements of a 2-D tensor."
+
+  - id: torch-reshape
+    title: "torch.reshape"
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.reshape.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    supports:
+      - "torch.reshape(input, shape) returns a tensor with the given shape."
+      - "Tensor.view(shape) returns a view with the given shape; requires contiguous memory."
+      - "Tensor.flatten(start_dim, end_dim) collapses dimensions into one."
+      - "Tensor.transpose(dim0, dim1) swaps two dimensions."
+      - "Tensor.permute(dims) rearranges all dimensions at once."

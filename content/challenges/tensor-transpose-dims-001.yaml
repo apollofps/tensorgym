@@ -1,0 +1,78 @@
+id: tensor-transpose-dims-001
+title: Transpose the Last Two Dimensions
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - dimension-transposition
+concepts_tested:
+  - transpose
+  - negative-indexing
+
+required_prerequisites:
+  - tensor-reshaping
+optional_prerequisites: []
+
+concept_capsules:
+  - tensor-reshaping
+
+prompt: |
+  Implement `swap_last_two(x)` that transposes the last two dimensions of a
+  tensor. For example, a tensor of shape (2, 3, 4) becomes (2, 4, 3).
+
+  This must work for tensors with any number of dimensions (at least 2).
+  Do not use Python loops.
+
+starter_code: |
+  import torch
+
+
+  def swap_last_two(x: torch.Tensor) -> torch.Tensor:
+      # Swap the last two dimensions of x.
+      pass
+
+function_name: swap_last_two
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Must work for any tensor with 2 or more dimensions.
+
+visible_tests:
+  - name: shape-2x4x3
+    description: "A (2, 3, 4) tensor becomes (2, 4, 3)."
+    kind: expect_shape
+    input: [[[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0], [9.0, 10.0, 11.0, 12.0]], [[13.0, 14.0, 15.0, 16.0], [17.0, 18.0, 19.0, 20.0], [21.0, 22.0, 23.0, 24.0]]]
+    params:
+      shape: [2, 4, 3]
+
+hidden_test_file: tests/tensor_transpose_dims_001_hidden.py
+
+hints:
+  - level: 0
+    text: You need to swap the last two dimensions — how do you refer to them without hardcoding?
+  - level: 1
+    text: Negative indices work for dimensions too. The last dimension is -1, the second-to-last is -2.
+  - level: 2
+    text: torch.Tensor.transpose(dim0, dim1) swaps two dimensions.
+  - level: 3
+    text: "x.transpose(-2, -1) swaps the last two dimensions regardless of total rank."
+  - level: 4
+    text: "return x.transpose(-2, -1)"
+
+solution_file: solutions/tensor_transpose_dims_001.py
+
+estimated_minutes: 5
+
+sources:
+  - torch-reshape
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

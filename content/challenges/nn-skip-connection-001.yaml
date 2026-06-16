@@ -1,0 +1,82 @@
+id: nn-skip-connection-001
+title: Residual (Skip) Connection
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - skip-connections
+concepts_tested:
+  - nn-module
+  - residual-connections
+
+required_prerequisites:
+  - nn-module-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - nn-module-basics
+
+prompt: |
+  Implement `residual_forward(x)` that creates a residual block: the output is
+  ReLU(Linear(x)) + x.
+
+  The input has shape (N, D) with D=4. The Linear layer maps D→D (same size),
+  so the skip connection dimensions match.
+
+  Use `torch.manual_seed(42)` before creating the layer. Return the result.
+
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def residual_forward(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: residual_forward
+
+constraints:
+  - Use torch.manual_seed(42) before creating the layer.
+  - The output must be ReLU(Linear(x)) + x.
+
+visible_tests:
+  - name: output-shape
+    description: "Output should have shape [2, 4] for a (2, 4) input."
+    kind: expect_shape
+    input: [[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]]
+    params:
+      shape: [2, 4]
+  - name: output-is-tensor
+    description: "Output must be a tensor."
+    kind: output_is_tensor
+    input: [[1.0, 2.0, 3.0, 4.0]]
+
+hidden_test_file: tests/nn_skip_connection_001_hidden.py
+
+hints:
+  - level: 0
+    text: "A residual connection adds the input back to the output of a transformation."
+  - level: 1
+    text: "Create nn.Linear(4, 4), apply it to x, then apply ReLU, then add x."
+  - level: 2
+    text: "torch.manual_seed(42); linear = nn.Linear(4, 4); return torch.relu(linear(x)) + x"
+
+solution_file: solutions/nn_skip_connection_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-nn-module
+  - torch-nn-linear
+  - torch-nn-relu
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

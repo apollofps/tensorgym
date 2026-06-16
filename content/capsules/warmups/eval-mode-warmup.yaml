@@ -1,0 +1,40 @@
+id: eval-mode-warmup
+title: "Warm-up: Consistent Dropout Output"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+parent_capsule: train-eval-mode
+prompt: |
+  Given a model (an nn.Sequential with a Linear and Dropout layer) and an
+  input tensor `x`, run the model in eval mode so that Dropout is disabled.
+  Return the model's output. The key insight: call model.eval() before the
+  forward pass to get deterministic output.
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def eval_forward(model: nn.Module, x: torch.Tensor) -> torch.Tensor:
+      # Put the model in eval mode and return the forward pass output.
+      pass
+function_name: eval_forward
+constraints:
+  - Must call model.eval() before the forward pass.
+  - Must return a tensor.
+visible_tests:
+  - name: output-is-tensor
+    description: "The function must return a tensor."
+    kind: output_is_tensor
+    input:
+      args: [[[1.0, 2.0, 3.0]], [[1.0, 2.0, 3.0]]]
+    params:
+      input_dtype: "float32"
+solution_inline: |
+  model.eval()
+  return model(x)
+sources:
+  - torch-nn-train-eval
+  - torch-nn-dropout
+verification:
+  status: verified
+  verified_at: "2026-06-16"

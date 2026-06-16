@@ -1,0 +1,89 @@
+id: nn-custom-loss-001
+title: Implement Huber Loss Manually
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - custom-loss-function
+concepts_tested:
+  - tensor-operations
+  - loss-functions
+
+required_prerequisites:
+  - tensor-creation
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - training-loop-basics
+
+prompt: |
+  Implement `huber_loss(pred, target, delta)` that computes the Huber loss manually.
+
+  Huber loss is quadratic for small errors (|error| <= delta) and linear for large
+  errors. Formula:
+    if |a| <= delta: 0.5 * a²
+    else: delta * (|a| - 0.5 * delta)
+  where a = pred - target.
+
+  Return the mean loss over all elements. `delta` is a Python float.
+
+starter_code: |
+  import torch
+
+
+  def huber_loss(pred: torch.Tensor, target: torch.Tensor, delta: float) -> torch.Tensor:
+      pass
+
+function_name: huber_loss
+
+constraints:
+  - Do not use nn.HuberLoss or nn.SmoothL1Loss.
+  - Return the mean over all elements.
+  - Must work for any tensor shape.
+
+visible_tests:
+  - name: basic-values
+    description: "Huber loss for errors [0, 3] with delta=1 should be 1.25."
+    kind: expect_value
+    input:
+      args: [[1.0, 5.0], [1.0, 2.0], 1.0]
+    params:
+      expected: 1.25
+      atol: 0.001
+  - name: output-is-tensor
+    description: "Output must be a tensor."
+    kind: output_is_tensor
+    input:
+      args: [[0.0, 0.0], [0.0, 0.0], 1.0]
+
+hidden_test_file: tests/nn_custom_loss_001_hidden.py
+
+hints:
+  - level: 0
+    text: "Huber loss transitions from quadratic to linear at the delta threshold."
+  - level: 1
+    text: "Compute the absolute error first, then apply different formulas based on the threshold."
+  - level: 2
+    text: "Use torch.where or torch.clamp to separate the quadratic and linear regions."
+  - level: 3
+    text: "abs_err = (pred - target).abs(); quadratic = torch.clamp(abs_err, max=delta); linear = abs_err - quadratic; loss = 0.5 * quadratic**2 + delta * linear; return loss.mean()"
+
+solution_file: solutions/nn_custom_loss_001.py
+
+estimated_minutes: 12
+
+sources:
+  - torch-nn-mseloss
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

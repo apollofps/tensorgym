@@ -1,0 +1,53 @@
+id: matmul-shapes-warmup
+title: "Warm-up: Matrix Product"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: matrix-multiplication
+
+prompt: |
+  Given two matrices `a` (2x3) and `b` (3x4), return their matrix product.
+  The result should have shape (2, 4).
+
+starter_code: |
+  import torch
+
+
+  def mat_product(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
+      # a has shape (2, 3), b has shape (3, 4). Return their matrix product.
+      pass
+
+function_name: mat_product
+
+constraints:
+  - Use matrix multiplication, not element-wise multiplication.
+  - Output shape must be (2, 4).
+
+visible_tests:
+  - name: shape-is-2-by-4
+    description: "The result of (2,3) @ (3,4) must have shape (2, 4)."
+    kind: expect_shape
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+             [[1.0, 0.0, 1.0, 2.0], [0.0, 1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 0.0]]]
+    params:
+      shape: [2, 4]
+  - name: values-correct
+    description: "Matrix product values are correct."
+    kind: exact_allclose
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+             [[1.0, 0.0, 1.0, 2.0], [0.0, 1.0, 0.0, 1.0], [1.0, 1.0, 1.0, 0.0]]]
+    params:
+      expected: [[4.0, 5.0, 4.0, 4.0], [10.0, 11.0, 10.0, 13.0]]
+
+solution_inline: |
+  return a @ b
+
+sources:
+  - torch-matmul
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

@@ -1,0 +1,78 @@
+id: nn-train-eval-toggle-001
+title: Consistent Dropout Output in Eval Mode
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - eval-mode-usage
+concepts_tested:
+  - train-eval-mode
+
+required_prerequisites:
+  - train-eval-mode
+optional_prerequisites: []
+
+concept_capsules:
+  - train-eval-mode
+
+prompt: |
+  Implement `eval_forward(x)` that creates a model with Linear(4, 4) and
+  Dropout(p=0.5), puts it in eval mode, and runs a forward pass.
+
+  In eval mode, Dropout is disabled, so the output should be deterministic.
+  Use `torch.manual_seed(42)` before creating the model.
+
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def eval_forward(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: eval_forward
+
+constraints:
+  - Use torch.manual_seed(42) before creating the model.
+  - The model must be in eval mode before the forward pass.
+
+visible_tests:
+  - name: output-shape
+    description: "Output should have shape [1, 4] for a (1, 4) input."
+    kind: expect_shape
+    input: [[1.0, 2.0, 3.0, 4.0]]
+    params:
+      shape: [1, 4]
+  - name: output-is-tensor
+    description: "Output must be a tensor."
+    kind: output_is_tensor
+    input: [[1.0, 2.0, 3.0, 4.0]]
+
+hidden_test_file: tests/nn_train_eval_toggle_001_hidden.py
+
+hints:
+  - level: 0
+    text: "model.eval() switches modules like Dropout and BatchNorm to evaluation behavior."
+  - level: 1
+    text: "Use nn.Sequential(nn.Linear(4, 4), nn.Dropout(p=0.5)) and call model.eval()."
+  - level: 2
+    text: "torch.manual_seed(42); model = nn.Sequential(nn.Linear(4, 4), nn.Dropout(p=0.5)); model.eval(); return model(x)"
+
+solution_file: solutions/nn_train_eval_toggle_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-nn-train-eval
+  - torch-nn-dropout
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

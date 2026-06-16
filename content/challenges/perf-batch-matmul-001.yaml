@@ -1,0 +1,85 @@
+id: perf-batch-matmul-001
+title: Batched Matrix Multiply Without a Loop
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - batched-operations
+concepts_tested:
+  - matrix-multiplication
+  - performance
+
+required_prerequisites:
+  - matrix-multiplication
+optional_prerequisites: []
+
+concept_capsules:
+  - matrix-multiplication
+
+prompt: |
+  Implement `batch_matmul(a, b)` that performs batched matrix multiplication.
+  `a` has shape (B, N, K) and `b` has shape (B, K, M). Return the result of
+  shape (B, N, M). Use torch.bmm or torch.matmul — no Python loops.
+
+starter_code: |
+  import torch
+
+
+  def batch_matmul(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
+      # a has shape (B, N, K), b has shape (B, K, M).
+      # Return batched matrix product with shape (B, N, M).
+      # No Python loops.
+      pass
+
+function_name: batch_matmul
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Use torch.bmm or torch.matmul for the batched multiply.
+
+visible_tests:
+  - name: output-shape
+    description: "Two batches of 2x2 matrices produce shape (2, 2, 2)."
+    kind: expect_shape
+    input:
+      args:
+        - [[[1.0, 0.0], [0.0, 1.0]], [[2.0, 0.0], [0.0, 2.0]]]
+        - [[[1.0, 2.0], [3.0, 4.0]], [[5.0, 6.0], [7.0, 8.0]]]
+    params:
+      shape: [2, 2, 2]
+  - name: no-loops
+    description: "No Python for/while loops allowed."
+    kind: no_loops
+
+hidden_test_file: tests/perf_batch_matmul_001_hidden.py
+
+hints:
+  - level: 0
+    text: PyTorch has dedicated functions for batched matrix operations.
+  - level: 1
+    text: torch.bmm handles batched matrix multiplication of 3-D tensors.
+  - level: 2
+    text: torch.matmul also works and supports broadcasting.
+  - level: 3
+    text: "`torch.bmm(a, b)` multiplies corresponding matrices in the batch."
+  - level: 4
+    text: "return torch.bmm(a, b)"
+
+solution_file: solutions/perf_batch_matmul_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-bmm
+  - torch-matmul
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

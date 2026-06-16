@@ -1,0 +1,134 @@
+# TensorGym source registry — nn.Module and training
+# Every entry was fetched and read this session. Do not add an entry you have not read.
+# Versions/behavior cross-checked against the pinned env (PyTorch 2.12.0) by the
+# verification suite (tests/test_content_verification.py).
+
+sources:
+  - id: torch-nn-module
+    title: torch.nn.Module
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.Module.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "nn.Module is the base class for all neural network modules."
+      - "Subclasses must implement __init__ (register layers) and forward (define computation)."
+      - "parameters() returns an iterator over all learnable parameters."
+
+  - id: torch-nn-linear
+    title: torch.nn.Linear
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.Linear.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "nn.Linear(in_features, out_features, bias=True) applies y = xA^T + b."
+      - "Weight has shape (out_features, in_features); bias has shape (out_features,)."
+
+  - id: torch-nn-relu
+    title: torch.nn.ReLU
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.ReLU.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "nn.ReLU applies the element-wise function max(0, x)."
+
+  - id: torch-nn-dropout
+    title: torch.nn.Dropout
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.Dropout.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "nn.Dropout randomly zeroes elements during training with probability p."
+      - "During eval mode, Dropout is a no-op (identity)."
+
+  - id: torch-nn-batchnorm
+    title: torch.nn.BatchNorm1d
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.BatchNorm1d.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "BatchNorm1d uses batch statistics in train mode and running statistics in eval mode."
+
+  - id: torch-nn-mseloss
+    title: torch.nn.MSELoss
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.MSELoss.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "nn.MSELoss computes mean squared error between input and target."
+
+  - id: torch-optim-sgd
+    title: torch.optim.SGD
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.optim.SGD.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "SGD implements stochastic gradient descent, optionally with momentum."
+      - "optimizer.zero_grad() zeroes all parameter gradients."
+      - "optimizer.step() performs a single optimization step."
+
+  - id: torch-nn-train-eval
+    title: Module.train / Module.eval
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.nn.Module.html#torch.nn.Module.train"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "model.train() sets the module to training mode."
+      - "model.eval() sets the module to evaluation mode."
+      - "These affect layers like Dropout and BatchNorm."
+
+  - id: torch-utils-benchmark
+    title: torch.utils.benchmark
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/benchmark_utils.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "Timer measures execution time with proper warmup and statistical reporting."
+
+  - id: torch-outer
+    title: torch.outer
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.outer.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "torch.outer(input, vec2) computes the outer product of two 1-D vectors."
+
+  - id: torch-index-select
+    title: torch.index_select
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.index_select.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "torch.index_select(input, dim, index) selects elements along a dimension using an index tensor."
+
+  - id: torch-backward
+    title: torch.Tensor.backward
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.Tensor.backward.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-16"
+    supports:
+      - "backward(create_graph=True) allows computing higher-order gradients."
+      - "Gradients accumulate in .grad unless explicitly zeroed."

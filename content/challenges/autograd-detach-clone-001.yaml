@@ -1,0 +1,84 @@
+id: autograd-detach-clone-001
+title: Detach and Clone for Safe Copies
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - detach-clone
+concepts_tested:
+  - autograd
+  - detach
+
+required_prerequisites:
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - autograd-basics
+
+prompt: |
+  Implement `safe_copy(x)` that returns a copy of x that is completely detached
+  from the computation graph and does not track gradients.
+
+  Clone x with requires_grad_(True), compute y = x * 2, then return a safe
+  detached clone of y that has requires_grad=False.
+
+starter_code: |
+  import torch
+
+
+  def safe_copy(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: safe_copy
+
+constraints:
+  - The returned tensor must not be part of any computation graph.
+  - The returned tensor must have requires_grad=False.
+
+visible_tests:
+  - name: basic-values
+    description: "x * 2 at [1.0, 2.0] gives [2.0, 4.0]."
+    kind: exact_allclose
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      expected: [2.0, 4.0]
+  - name: no-grad-tracking
+    description: "Output must not require grad."
+    kind: expect_requires_grad
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      requires_grad: false
+
+hidden_test_file: tests/autograd_detach_clone_001_hidden.py
+
+hints:
+  - level: 0
+    text: "detach() removes a tensor from the computation graph."
+  - level: 1
+    text: "clone() makes a copy of the data. Use both for a fully independent tensor."
+  - level: 2
+    text: "Compute y = x * 2, then return y.detach().clone()."
+  - level: 3
+    text: "x = x.clone().requires_grad_(True); y = x * 2; return y.detach().clone()"
+
+solution_file: solutions/autograd_detach_clone_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-tensor-detach
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

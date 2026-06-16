@@ -1,0 +1,102 @@
+id: tensor-one-hot-001
+title: One-Hot Encoding
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - one-hot-encoding
+concepts_tested:
+  - tensor-creation
+  - scatter-operations
+
+required_prerequisites:
+  - tensor-creation
+optional_prerequisites:
+  - tensor-indexing
+
+concept_capsules:
+  - tensor-creation
+
+prompt: |
+  Implement `one_hot_encode(labels, num_classes)` that creates a one-hot encoding
+  matrix.
+
+  `labels` is a 1-D integer tensor of shape (N,) containing class indices in
+  [0, num_classes). `num_classes` is a Python int.
+
+  Return a float32 tensor of shape (N, num_classes) where each row has a 1.0 at
+  the column corresponding to the label and 0.0 elsewhere.
+
+  Example: labels=[0, 2, 1], num_classes=3 ->
+    [[1, 0, 0],
+     [0, 0, 1],
+     [0, 1, 0]]
+
+  Do not use Python loops or torch.nn.functional.one_hot.
+
+starter_code: |
+  import torch
+
+
+  def one_hot_encode(labels: torch.Tensor, num_classes: int) -> torch.Tensor:
+      # labels has shape (N,) with integer class indices.
+      # Return a float32 tensor of shape (N, num_classes) with one-hot rows.
+      pass
+
+function_name: one_hot_encode
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Do not use torch.nn.functional.one_hot.
+  - Output dtype must be float32.
+  - Output shape must be (N, num_classes).
+
+visible_tests:
+  - name: values-correct
+    description: "labels=[0,2,1], num_classes=3 gives the correct one-hot matrix."
+    kind: exact_allclose
+    input:
+      args: [[0, 2, 1], 3]
+    params:
+      expected: [[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+      input_dtype: "int64"
+  - name: shape-correct
+    description: "Output shape must be (3, 3) for 3 labels and 3 classes."
+    kind: expect_shape
+    input:
+      args: [[0, 2, 1], 3]
+    params:
+      shape: [3, 3]
+      input_dtype: "int64"
+
+hidden_test_file: tests/tensor_one_hot_001_hidden.py
+
+hints:
+  - level: 0
+    text: Start by creating a zeros tensor of the right shape, then place 1.0 at the right positions.
+  - level: 1
+    text: "torch.Tensor.scatter_(dim, index, src) writes values from src into self at positions given by index."
+  - level: 2
+    text: "scatter_ along dim=1 needs index of shape (N, 1). Use labels.unsqueeze(1) to add the column dimension."
+  - level: 3
+    text: "result = torch.zeros(N, num_classes); result.scatter_(1, labels.unsqueeze(1), 1.0)"
+  - level: 4
+    text: "labels = labels.long(); result = torch.zeros(labels.shape[0], num_classes); result.scatter_(1, labels.unsqueeze(1), 1.0); return result"
+
+solution_file: solutions/tensor_one_hot_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-tensor-creation
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

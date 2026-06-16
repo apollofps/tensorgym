@@ -1,0 +1,86 @@
+id: autograd-accumulate-001
+title: Gradient Accumulation
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - gradient-accumulation
+concepts_tested:
+  - autograd
+  - gradient-accumulation
+
+required_prerequisites:
+  - autograd-basics
+  - gradient-accumulation
+optional_prerequisites: []
+
+concept_capsules:
+  - gradient-accumulation
+
+prompt: |
+  Implement `accumulated_grad(x)` that demonstrates gradient accumulation.
+
+  Clone x with requires_grad_(True), compute y1 = (x ** 2).sum() and call
+  backward, then compute y2 = (x * 3).sum() and call backward again WITHOUT
+  zeroing. The gradients accumulate: grad from y1 is 2x, grad from y2 is 3,
+  total is 2x + 3. Return x.grad.
+
+starter_code: |
+  import torch
+
+
+  def accumulated_grad(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: accumulated_grad
+
+constraints:
+  - Do NOT zero gradients between the two backward calls.
+  - Use .backward() (not torch.autograd.grad).
+
+visible_tests:
+  - name: basic-values
+    description: "2x + 3 at [1.0, 2.0] gives [5.0, 7.0]."
+    kind: exact_allclose
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      expected: [5.0, 7.0]
+  - name: output-shape
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      shape: [2]
+
+hidden_test_file: tests/autograd_accumulate_001_hidden.py
+
+hints:
+  - level: 0
+    text: "By default, PyTorch accumulates gradients in .grad rather than replacing them."
+  - level: 1
+    text: "The gradient of x² is 2x; the gradient of 3x is 3."
+  - level: 2
+    text: "Call backward on both y1 and y2 without zeroing .grad between calls."
+  - level: 3
+    text: "x = x.clone().requires_grad_(True); y1 = (x**2).sum(); y1.backward(); y2 = (x*3).sum(); y2.backward(); return x.grad"
+
+solution_file: solutions/autograd_accumulate_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-autograd
+  - torch-tensor-grad
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

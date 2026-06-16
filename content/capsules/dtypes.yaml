@@ -1,0 +1,53 @@
+id: dtypes
+title: Data Types (dtypes)
+estimated_minutes: 4
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  Every PyTorch tensor has a dtype that determines what kind of numbers it stores
+  and how much memory each element uses. The most common dtypes are:
+
+  - torch.float32 (alias: torch.float) - 32-bit floating point. This is the
+    default for torch.tensor() when given Python floats, and the standard dtype
+    for neural network weights and activations.
+  - torch.float64 (alias: torch.double) - 64-bit floating point. More precision,
+    more memory. Rarely needed in deep learning.
+  - torch.int64 (alias: torch.long) - 64-bit integer. Default for torch.tensor()
+    when given Python ints. Used for class labels, indices, and counts.
+  - torch.int32 (alias: torch.int) - 32-bit integer.
+  - torch.bool - True/False values. Created by comparison operators like x > 0.
+
+  You can check a tensor's dtype with the .dtype attribute. To change dtype, use
+  .to(dtype) for any conversion, or convenience methods like .float() (to float32),
+  .long() (to int64), .double() (to float64), and .bool().
+
+  Dtype mismatches cause errors: you cannot add a float32 tensor to an int64 tensor
+  without casting one first. Most operations require matching dtypes.
+
+learning_objectives:
+  - Name the five core dtypes and when each is used.
+  - Cast a tensor to a different dtype using .to() and convenience methods.
+  - Predict whether an operation will fail due to dtype mismatch.
+
+interactive_example: examples/dtypes_example.py
+
+warmup_challenge_id: cast-to-float-warmup
+
+common_mistakes:
+  - Forgetting that torch.tensor([1, 2, 3]) creates int64, not float32.
+  - Trying arithmetic between integer and float tensors without casting.
+  - Using float64 unnecessarily, wasting memory and slowing computation.
+
+sources:
+  - torch-tensor-dtype
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

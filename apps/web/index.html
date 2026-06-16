@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TensorGym</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/dracula.min.css">
+<style>
+  :root {
+    --bg:       #111316;
+    --surface:  #191b1f;
+    --raised:   #1e2025;
+    --edge:     #2a2d33;
+    --edge-dim: #222529;
+    --ink:      #d4d7dd;
+    --ink-h:    #eceef2;
+    --muted:    #7c818a;
+    --subtle:   #494d55;
+    --accent:   #6e9eff;
+    --accent-d: rgba(110,158,255,.10);
+    --green:    #5db870;
+    --green-d:  rgba(93,184,112,.10);
+    --red:      #d46a65;
+    --red-d:    rgba(212,106,101,.10);
+    --amber:    #c9a84e;
+    --amber-d:  rgba(201,168,78,.10);
+    --r:        6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 13.5px/1.6 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 24px; height: 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--edge-dim);
+  }
+
+  .brand {
+    font-size: 14px; font-weight: 600; letter-spacing: -.2px;
+    color: var(--ink-h); flex-shrink: 0;
+  }
+  .brand b { color: var(--accent); font-weight: 700; }
+
+  .nav-links {
+    display: flex; gap: 2px; margin-left: 8px;
+  }
+  .nav-links button {
+    background: none; border: none; color: var(--muted);
+    font: 12.5px/1 inherit; padding: 6px 12px; border-radius: 4px;
+    cursor: pointer; transition: color .15s, background .15s;
+  }
+  .nav-links button:hover { color: var(--ink); background: var(--raised); }
+  .nav-links button.active { color: var(--ink-h); background: var(--raised); }
+
+  .nav-env {
+    margin-left: auto; font-size: 11px; color: var(--subtle);
+  }
+
+  /* ── Roadmap View ── */
+  #roadmapView {
+    max-width: 780px; margin: 0 auto; padding: 32px 24px 64px;
+  }
+
+  .roadmap-head {
+    margin-bottom: 32px;
+  }
+  .roadmap-head h1 {
+    font-size: 22px; font-weight: 600; letter-spacing: -.3px;
+    color: var(--ink-h); margin: 0 0 4px;
+  }
+  .roadmap-head p {
+    font-size: 13px; color: var(--muted); margin: 0;
+  }
+
+  .topic-group {
+    margin-bottom: 28px;
+  }
+  .topic-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--subtle);
+    padding-bottom: 8px; margin-bottom: 2px;
+    border-bottom: 1px solid var(--edge-dim);
+  }
+
+  .problem-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 4px;
+    border-bottom: 1px solid var(--edge-dim);
+    cursor: pointer;
+    transition: background .12s;
+    border-radius: 3px;
+  }
+  .problem-row:last-child { border-bottom: none; }
+  .problem-row:hover { background: var(--raised); }
+
+  .problem-status {
+    width: 18px; height: 18px; flex-shrink: 0;
+    border-radius: 50%; border: 1.5px solid var(--edge);
+    display: grid; place-items: center;
+    font-size: 10px; color: transparent;
+    transition: border-color .15s, background .15s;
+  }
+  .problem-status.done {
+    border-color: var(--green); background: var(--green-d);
+    color: var(--green);
+  }
+
+  .problem-title {
+    flex: 1; font-size: 13px; color: var(--ink);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .diff-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .diff-dot.easy   { background: var(--green); }
+  .diff-dot.medium { background: var(--amber); }
+  .diff-dot.hard   { background: var(--red); }
+
+  .problem-time {
+    font-size: 11px; color: var(--subtle); flex-shrink: 0; min-width: 36px;
+    text-align: right;
+  }
+
+  .roadmap-stats {
+    display: flex; gap: 24px; margin-bottom: 24px;
+  }
+  .stat-block {
+    display: flex; flex-direction: column;
+  }
+  .stat-val {
+    font-size: 20px; font-weight: 600; color: var(--ink-h);
+    letter-spacing: -.5px; line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 11px; color: var(--muted);
+  }
+
+  /* ── Workspace View ── */
+  #workspaceView {
+    display: none;
+  }
+  #workspaceView.active { display: block; }
+  #roadmapView.hide { display: none; }
+
+  .ws-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr 280px;
+    gap: 1px; background: var(--edge-dim);
+    min-height: calc(100vh - 48px);
+  }
+
+  .ws-col {
+    background: var(--bg);
+    overflow-y: auto;
+  }
+  .ws-col:first-child { background: var(--surface); }
+  .ws-col:last-child  { background: var(--surface); }
+
+  .ws-section {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--edge-dim);
+  }
+  .ws-section:last-child { border-bottom: none; }
+
+  .ws-label {
+    font-size: 10.5px; font-weight: 600; letter-spacing: .03em;
+    text-transform: uppercase; color: var(--subtle);
+    margin-bottom: 8px;
+  }
+
+  .ws-title {
+    font-size: 15px; font-weight: 600; color: var(--ink-h);
+    letter-spacing: -.2px; margin-bottom: 2px;
+  }
+  .ws-meta {
+    font-size: 12px; color: var(--muted); margin-bottom: 12px;
+  }
+
+  /* ── Shared components ── */
+  pre {
+    font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap; background: var(--bg);
+    border: 1px solid var(--edge-dim); border-radius: var(--r);
+    padding: 10px 12px; margin: 4px 0; overflow: auto; color: var(--ink);
+  }
+  pre.plain { background: transparent; border: none; padding: 0; margin: 0 0 8px; }
+
+  button {
+    display: inline-flex; align-items: center; gap: 5px;
+    font: 12px/1 inherit; font-weight: 500; padding: 7px 14px;
+    border-radius: var(--r); border: 1px solid var(--edge);
+    background: var(--raised); color: var(--ink);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+    white-space: nowrap;
+  }
+  button:hover:not(:disabled) { border-color: var(--accent); color: var(--ink-h); }
+  button.primary {
+    background: var(--accent-d);
+    border-color: rgba(110,158,255,.25);
+    color: var(--accent);
+  }
+  button.primary:hover:not(:disabled) {
+    background: rgba(110,158,255,.16);
+    border-color: rgba(110,158,255,.4);
+  }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+
+  h2 {
+    font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .03em;
+    color: var(--subtle); margin: 16px 0 6px;
+  }
+  h2:first-child { margin-top: 0; }
+
+  .ok   { color: var(--green); }
+  .bad  { color: var(--red); }
+  .mut  { color: var(--muted); }
+  .warn { color: var(--amber); }
+
+  .chk {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 4px 0;
+    border-bottom: 1px solid var(--edge-dim);
+    font-size: 12.5px;
+  }
+  .chk:last-child { border-bottom: none; }
+  .chk span:last-child {
+    font-size: 10.5px; font-weight: 600;
+    padding: 1px 7px; border-radius: 100px; flex-shrink: 0;
+  }
+  .chk span.ok   { color: var(--green); background: var(--green-d); }
+  .chk span.bad  { color: var(--red);   background: var(--red-d); }
+  .chk span.warn { color: var(--amber); background: var(--amber-d); }
+
+  .tag {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 1px 6px; border-radius: 3px;
+    background: var(--raised); border: 1px solid var(--edge-dim);
+    color: var(--muted); vertical-align: middle; margin-right: 4px;
+  }
+
+  .kvs { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 12px; }
+  .kvs span:nth-child(odd)  { color: var(--muted); }
+  .kvs span:nth-child(even) { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
+
+  .bar {
+    height: 3px; background: var(--edge-dim);
+    border-radius: 100px; overflow: hidden; margin: 3px 0 10px;
+  }
+  .bar > span {
+    display: block; height: 100%; background: var(--green);
+    border-radius: 100px; transition: width .4s ease-out;
+  }
+
+  .hidden { display: none; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .CodeMirror {
+    height: auto; border: 1px solid var(--edge-dim); border-radius: var(--r);
+    font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    line-height: 1.55;
+  }
+  .CodeMirror-scroll   { min-height: 200px; }
+  #cm-code .CodeMirror-scroll { min-height: 260px; }
+  .CodeMirror-gutters  { border-right: 1px solid var(--edge-dim); background: var(--bg); }
+  .CodeMirror-linenumber { color: var(--subtle); padding: 0 8px 0 6px; }
+
+  @media (max-width: 1100px) {
+    .ws-grid { grid-template-columns: 1fr; }
+    .ws-col:first-child, .ws-col:last-child { background: var(--bg); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><b>Tensor</b>Gym</div>
+  <div class="nav-links">
+    <button class="active" id="navRoadmap" onclick="showView('roadmap')">Roadmap</button>
+    <button id="navWorkspace" onclick="showView('workspace')">Workspace</button>
+  </div>
+  <span class="nav-env" id="env"></span>
+</nav>
+
+<!-- ═══════════════════ ROADMAP VIEW ═══════════════════ -->
+<div id="roadmapView">
+  <div class="roadmap-head">
+    <h1>Problem Roadmap</h1>
+    <p>30 challenges across 5 categories. Select a problem to begin.</p>
+  </div>
+  <div class="roadmap-stats" id="roadmapStats"></div>
+  <div id="roadmapList"></div>
+</div>
+
+<!-- ═══════════════════ WORKSPACE VIEW ═══════════════════ -->
+<div id="workspaceView">
+  <div class="ws-grid">
+
+    <!-- LEFT: prompt -->
+    <div class="ws-col">
+      <div class="ws-section">
+        <div class="ws-title" id="title"></div>
+        <div class="ws-meta" id="meta"></div>
+        <pre id="prompt" style="margin:0"></pre>
+      </div>
+      <div class="ws-section">
+        <div class="ws-label">Constraints</div>
+        <div class="mut" id="constraints" style="font-size:12.5px;line-height:1.7"></div>
+      </div>
+      <div class="ws-section">
+        <div class="ws-label">Prerequisites</div>
+        <div id="prereqs"></div>
+      </div>
+      <div class="ws-section">
+        <div class="ws-label">Visible Tests</div>
+        <div id="vtests" class="mut" style="font-size:12.5px;line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- CENTER: editor -->
+    <div class="ws-col" style="padding:16px 18px;">
+      <textarea id="code" spellcheck="false"></textarea>
+      <div class="btn-row">
+        <button class="primary" id="btnRun">Run</button>
+        <button class="primary" id="btnSubmit">Submit</button>
+        <button id="btnHint">Hint</button>
+        <button id="btnIdk">I don't know this yet</button>
+        <button id="btnSol">Solution</button>
+        <button id="btnReset">Reset</button>
+      </div>
+      <div id="hintBox" class="mut" style="font-size:12.5px"></div>
+
+      <div id="result" class="mut" style="font-size:13px;margin-top:12px">Run or submit to see results.</div>
+
+      <!-- Prerequisite recovery -->
+      <div id="prep" class="hidden" style="margin-top:16px;">
+        <div class="ws-label" id="capTitle">Concept Capsule</div>
+        <div class="mut" id="capMeta" style="font-size:12px;margin-bottom:8px"></div>
+        <pre id="capSummary"></pre>
+        <div id="capObjectives" class="mut" style="margin-top:8px;font-size:12.5px;line-height:1.7"></div>
+
+        <div class="ws-label" style="margin-top:16px">Executable Example</div>
+        <textarea id="capExample" spellcheck="false"></textarea>
+        <div class="btn-row"><button id="btnRunExample" class="primary">Run example</button></div>
+        <pre id="exampleOut" class="mut">—</pre>
+
+        <div class="ws-label" style="margin-top:16px">Common Mistakes</div>
+        <div id="capMistakes" class="mut" style="font-size:12.5px;line-height:1.7"></div>
+
+        <div class="ws-label" style="margin-top:16px" id="warmTitle">Warm-up</div>
+        <pre id="warmPrompt" class="plain mut"></pre>
+        <textarea id="warmCode" spellcheck="false"></textarea>
+        <div class="btn-row">
+          <button id="btnRunWarm" class="primary">Run warm-up</button>
+          <button id="btnReturn" disabled>Return to challenge</button>
+        </div>
+        <div id="warmOut" class="mut" style="font-size:12.5px"></div>
+
+        <div class="ws-label" style="margin-top:16px">Sources</div>
+        <div id="capSources" class="mut" style="font-size:12.5px;line-height:1.9"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: inspector + progress -->
+    <div class="ws-col">
+      <div class="ws-section">
+        <div class="ws-label">Tensor Inspector</div>
+        <div id="inspector" class="mut">Run to inspect output.</div>
+      </div>
+      <div class="ws-section">
+        <div class="ws-label">Next Action</div>
+        <div id="next" class="mut">—</div>
+      </div>
+      <div class="ws-section">
+        <div class="ws-label">Mastery</div>
+        <div id="mastery" class="mut">—</div>
+      </div>
+      <div class="ws-section">
+        <div class="ws-label">History</div>
+        <div id="history" class="mut">—</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/python/python.min.js"></script>
+<script>
+let CHALLENGE = "tensor-row-normalize-001";
+const $ = id => document.getElementById(id);
+const api = (p, opt) => fetch(p, opt).then(r => r.json());
+let CAP = null, WARM = null;
+let ALL_CHALLENGES = [];
+
+const cmOpts = () => ({
+  mode: "python", theme: "dracula", lineNumbers: true,
+  tabSize: 4, indentUnit: 4, indentWithTabs: false,
+  extraKeys: {"Tab": cm => cm.execCommand("insertSoftTab")},
+});
+
+const editor    = CodeMirror.fromTextArea($("code"),       cmOpts());
+const capEditor = CodeMirror.fromTextArea($("capExample"), cmOpts());
+const warmEditor= CodeMirror.fromTextArea($("warmCode"),   cmOpts());
+editor.getWrapperElement().id    = "cm-code";
+capEditor.getWrapperElement().id = "cm-cap";
+warmEditor.getWrapperElement().id= "cm-warm";
+
+/* ── View switching ── */
+function showView(v){
+  const isRoadmap = v === "roadmap";
+  $("roadmapView").classList.toggle("hide", !isRoadmap);
+  $("workspaceView").classList.toggle("active", !isRoadmap);
+  $("navRoadmap").classList.toggle("active", isRoadmap);
+  $("navWorkspace").classList.toggle("active", !isRoadmap);
+  if(!isRoadmap) setTimeout(()=> editor.refresh(), 0);
+}
+
+/* ── Roadmap categories with curated order ── */
+const CATEGORIES = [
+  { key: "tensor", label: "Tensor & Shape", order: [
+    "tensor-create-zeros-001",
+    "tensor-reshape-flat-001",
+    "tensor-transpose-dims-001",
+    "tensor-broadcasting-add-001",
+    "tensor-row-normalize-001",
+    "tensor-col-normalize-001",
+    "tensor-outer-product-001",
+    "tensor-stack-batch-001",
+    "tensor-one-hot-001",
+    "tensor-fancy-index-001",
+  ]},
+  { key: "autograd", label: "Autograd", order: [
+    "autograd-gradient-001",
+    "autograd-no-grad-001",
+    "autograd-detach-clone-001",
+    "autograd-chain-001",
+    "autograd-accumulate-001",
+    "autograd-higher-order-001",
+  ]},
+  { key: "nn", label: "nn.Module & Training", order: [
+    "nn-param-count-001",
+    "nn-train-eval-toggle-001",
+    "nn-linear-module-001",
+    "nn-training-step-001",
+    "nn-custom-loss-001",
+    "nn-skip-connection-001",
+  ]},
+  { key: "debug", label: "Debugging", order: [
+    "debug-shape-mismatch-001",
+    "debug-wrong-reduction-001",
+    "debug-missing-grad-001",
+    "debug-inplace-error-001",
+  ]},
+  { key: "perf", label: "Performance", order: [
+    "perf-vectorize-001",
+    "perf-view-vs-copy-001",
+    "perf-batch-matmul-001",
+    "perf-memory-001",
+  ]},
+];
+
+function renderRoadmap(){
+  const list = $("roadmapList");
+  list.innerHTML = "";
+  const byId = {};
+  for(const c of ALL_CHALLENGES) byId[c.id] = c;
+
+  const total = ALL_CHALLENGES.length;
+  $("roadmapStats").innerHTML =
+    `<div class="stat-block"><span class="stat-val">${total}</span><span class="stat-label">problems</span></div>`+
+    `<div class="stat-block"><span class="stat-val">5</span><span class="stat-label">categories</span></div>`+
+    `<div class="stat-block"><span class="stat-val">${ALL_CHALLENGES.filter(c=>c.difficulty==="easy").length}</span><span class="stat-label">easy</span></div>`+
+    `<div class="stat-block"><span class="stat-val">${ALL_CHALLENGES.filter(c=>c.difficulty==="medium").length}</span><span class="stat-label">medium</span></div>`+
+    `<div class="stat-block"><span class="stat-val">${ALL_CHALLENGES.filter(c=>c.difficulty==="hard").length}</span><span class="stat-label">hard</span></div>`;
+
+  for(const cat of CATEGORIES){
+    const ordered = cat.order.map(id => byId[id]).filter(Boolean);
+    if(!ordered.length) continue;
+
+    const grp = document.createElement("div");
+    grp.className = "topic-group";
+    grp.innerHTML = `<div class="topic-label">${cat.label} <span style="color:var(--subtle);font-weight:400;text-transform:none;letter-spacing:0">${ordered.length} problems</span></div>`;
+
+    ordered.forEach((c, i) => {
+      const row = document.createElement("div");
+      row.className = "problem-row";
+      row.innerHTML =
+        `<div class="problem-status" title="not attempted"><span style="font-size:9px;color:var(--subtle)">${i+1}</span></div>`+
+        `<span class="problem-title">${c.title}</span>`+
+        `<span class="diff-dot ${c.difficulty}" title="${c.difficulty}"></span>`+
+        `<span class="problem-time">~${c.estimated_minutes}m</span>`;
+      row.onclick = () => {
+        CHALLENGE = c.id;
+        showView("workspace");
+        hintLevel = -1;
+        $("hintBox").innerHTML = "";
+        $("result").textContent = "Run or submit to see results.";
+        $("prep").classList.add("hidden");
+        loadChallenge();
+      };
+      grp.appendChild(row);
+    });
+    list.appendChild(grp);
+  }
+}
+
+/* ── Boot ── */
+async function boot(){
+  const h = await api("/api/health");
+  $("env").textContent = `PyTorch ${h.pinned.pytorch} · Python ${h.pinned.python}`;
+
+  const data = await api("/api/challenges");
+  ALL_CHALLENGES = data.challenges || [];
+  renderRoadmap();
+}
+
+async function loadChallenge(){
+  const c = await api(`/api/challenges/${CHALLENGE}`);
+  $("title").textContent = c.title;
+  const diffCls = c.difficulty==="easy"?"ok":(c.difficulty==="hard"?"bad":"warn");
+  $("meta").innerHTML = `<span class="${diffCls}" style="font-weight:500">${c.difficulty}</span> · ~${c.estimated_minutes} min`;
+  $("prompt").textContent = c.prompt;
+  $("constraints").innerHTML = c.constraints.map(x=>"<div style='margin:2px 0'>· "+x+"</div>").join("");
+  $("prereqs").innerHTML = c.prerequisites.map(p =>
+    `<div class="chk"><span>${p.id}</span><span class="${p.status==='known'?'ok':'warn'}">${p.status==='known'?'known':'unknown'}</span></div>`).join("");
+  $("vtests").innerHTML = c.visible_tests.map(t=>`<div style="margin:3px 0"><span style="color:var(--ink)">${t.name}</span> <span class="mut">— ${t.description||''}</span></div>`).join("");
+  editor.setValue(c.editor_code);
+  window.__starter = c.starter_code;
+  renderHistory(c.attempts);
+  $("prep").classList.add("hidden");
+  refreshProgress();
+}
+
+function renderFeedback(d){
+  if(!d.ok){
+    $("result").innerHTML = `<span class="bad">Execution error</span> ${d.execution_error||''} ${d.timed_out?'(timed out)':''}<pre>${d.stderr||''}</pre>`;
+    return;
+  }
+  const f = d.feedback;
+  const cls = f.status==="passed"?"ok":(f.status==="error"?"bad":"warn");
+  let html = `<div class="${cls}" style="font-weight:600;margin-bottom:8px">${f.status === "passed" ? "Passed" : "Failed"} — ${f.summary}</div>`;
+  if(f.observations && f.observations.length)
+    html += `<h2>What happened</h2>` + f.observations.map(o=>`<div style="margin:2px 0">· ${o}</div>`).join("");
+  if(f.concept) html += `<div style="margin-top:8px"><span class="tag">concept</span>${f.concept}</div>`;
+  if(f.inspect) html += `<div style="margin-top:4px"><span class="tag">inspect</span>${f.inspect}</div>`;
+  if(f.next_step) html += `<div style="margin-top:4px"><span class="tag">next</span>${f.next_step}</div>`;
+  if(f.mistake_category) html += `<div style="margin-top:6px;font-size:11px" class="mut">taxonomy: ${f.mistake_category}</div>`;
+  const all = (f.visible_results||[]).concat(f.hidden_results||[]);
+  html += `<h2>Checks ${f.passed_count}/${f.total_count}</h2>` + all.map(c=>
+    `<div class="chk"><span>${c.visibility==='hidden'?'hidden · ':''}${c.name}</span><span class="${c.passed?'ok':'bad'}">${c.passed?'pass':'fail'}</span></div>`).join("");
+  $("result").innerHTML = html;
+  renderInspector(d.metadata);
+  renderNext(d.next_action);
+  if(d.mastery_update && Object.keys(d.mastery_update).length)
+    $("result").innerHTML += `<div class="ok" style="margin-top:8px;font-weight:500">Mastery updated: ${JSON.stringify(d.mastery_update)}</div>`;
+  refreshProgress();
+}
+
+function renderInspector(m){
+  if(!m){ $("inspector").textContent="—"; return; }
+  if(m.error){ $("inspector").innerHTML=`<span class="bad">${m.error.type}: ${m.error.message}</span>`; return; }
+  const rows=[["shape",JSON.stringify(m.shape)],["rank",m.rank],["dtype",m.dtype],["device",m.device],
+    ["requires_grad",m.requires_grad],["grad_fn",m.grad_fn],["contiguous",m.is_contiguous],
+    ["numel",m.numel],["nbytes",m.nbytes+" B"]];
+  $("inspector").innerHTML=`<div class="kvs">`+rows.map(([k,v])=>`<span>${k}</span><span>${v}</span>`).join("")+`</div>`;
+}
+
+function renderNext(n){ $("next").innerHTML=n?`<div style="font-weight:500;color:var(--ink-h)">${n.title}</div><div class="mut" style="font-size:12px;margin-top:2px">${n.detail}</div>`:"—"; }
+
+function renderHistory(h){
+  $("history").innerHTML=(h&&h.length)?h.slice(-6).map(a=>
+    `<div class="chk"><span>${a.kind}${a.hints_used?' · '+a.hints_used+'h':''}</span><span class="${a.passed?'ok':'bad'}">${a.passed?'pass':'fail'}</span></div>`).join(""):"—";
+}
+
+async function refreshProgress(){
+  const p = await api(`/api/progress?challenge_id=${CHALLENGE}`);
+  const keys = Object.keys(p.mastery||{});
+  $("mastery").innerHTML=keys.length?keys.map(k=>{
+    const v=Math.round(p.mastery[k]*100);
+    return `<div style="margin-bottom:4px"><span style="font-size:12px">${k}</span> <span class="mut" style="font-size:11px">${v}%</span><div class="bar"><span style="width:${v}%"></span></div></div>`;
+  }).join(""):"no mastery yet";
+  if(p.attempts) renderHistory(p.attempts);
+}
+
+/* ── Actions ── */
+$("btnRun").onclick = async ()=>{ $("result").textContent="running…";
+  renderFeedback(await api(`/api/challenges/${CHALLENGE}/run`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:editor.getValue()})})); };
+$("btnSubmit").onclick = async ()=>{ $("result").textContent="submitting…";
+  renderFeedback(await api(`/api/challenges/${CHALLENGE}/submit`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:editor.getValue()})})); };
+
+let hintLevel=-1;
+$("btnHint").onclick = async ()=>{ hintLevel++;
+  const h=await api(`/api/challenges/${CHALLENGE}/hint?level=${hintLevel}`,{method:"POST"});
+  if(h.detail){ $("hintBox").innerHTML=`<span class="warn">No more hints.</span>`; hintLevel=h.max_level??hintLevel; return; }
+  $("hintBox").innerHTML+=`<div style="margin-top:6px"><span class="tag">L${h.level}</span>${h.text}</div>`; };
+
+$("btnSol").onclick = async ()=>{
+  const s=await api(`/api/challenges/${CHALLENGE}/solution`);
+  $("result").innerHTML=`<h2>Reference solution</h2><pre>${s.solution_code}</pre>`; };
+
+$("btnReset").onclick = ()=>{ editor.setValue(window.__starter||""); };
+
+$("btnIdk").onclick = async ()=>{
+  const r=await api(`/api/challenges/${CHALLENGE}/idk`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:editor.getValue()})});
+  await openCapsule(r.capsule.id, r.warmup_id);
+};
+
+async function openCapsule(capId, warmId){
+  CAP=await api(`/api/capsules/${capId}`);
+  $("capTitle").textContent="Capsule — "+CAP.title;
+  $("capMeta").textContent=`~${CAP.estimated_minutes} min · PyTorch ${CAP.supported_pytorch_version}`;
+  $("capSummary").textContent=CAP.summary;
+  $("capObjectives").innerHTML="<b>Objectives</b><br>"+CAP.learning_objectives.map(o=>"· "+o).join("<br>");
+  capEditor.setValue(CAP.example_code);
+  $("capMistakes").innerHTML=CAP.common_mistakes.map(m=>"· "+m).join("<br>");
+  $("capSources").innerHTML=CAP.sources.map(s=>`· <a href="${s.url}" target="_blank">${s.title}</a> <span class="mut">(v${s.documentation_version})</span>`).join("<br>");
+  WARM=await api(`/api/warmups/${warmId}`);
+  $("warmTitle").textContent="Warm-up — "+WARM.title;
+  $("warmPrompt").textContent=WARM.prompt;
+  warmEditor.setValue(WARM.starter_code);
+  $("btnReturn").disabled=true;
+  $("exampleOut").textContent="—"; $("warmOut").textContent="";
+  $("prep").classList.remove("hidden");
+  setTimeout(()=>{ capEditor.refresh(); warmEditor.refresh(); }, 0);
+  $("prep").scrollIntoView({behavior:"smooth"});
+}
+
+$("btnRunExample").onclick = async ()=>{ $("exampleOut").textContent="running…";
+  const r=await api(`/api/capsules/${CAP.id}/run-example`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:capEditor.getValue()})});
+  $("exampleOut").textContent=r.ok?(r.stdout||"(no output)")+(r.stderr?("\n[stderr]\n"+r.stderr):""):("error: "+r.execution_error); };
+
+$("btnRunWarm").onclick = async ()=>{ $("warmOut").textContent="running…";
+  const r=await api(`/api/warmups/${WARM.id}/run`,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({code:warmEditor.getValue()})});
+  if(!r.ok){ $("warmOut").textContent="error: "+r.execution_error; return; }
+  $("warmOut").innerHTML=r.checks.map(c=>
+    `<div class="chk"><span>${c.name}</span><span class="${c.passed?'ok':'bad'}">${c.passed?'pass':'fail'}: ${c.detail||''}</span></div>`).join("")
+    +(r.completed?`<div class="ok" style="margin-top:8px;font-weight:500">Warm-up complete — you can return.</div>`:`<div class="warn" style="margin-top:8px">Pass all checks to unlock return.</div>`);
+  $("btnReturn").disabled=!r.completed; };
+
+$("btnReturn").onclick = async ()=>{ await loadChallenge(); $("hintBox").innerHTML=""; hintLevel=-1; };
+
+boot();
+</script>
+</body>
+</html>

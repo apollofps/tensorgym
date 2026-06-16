@@ -1,0 +1,48 @@
+id: gradient-accumulation
+title: Gradient Accumulation
+estimated_minutes: 4
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  By default PyTorch accumulates gradients across .backward() calls. If you call
+  backward() twice on different losses without zeroing, .grad will contain the sum
+  of both gradient computations. This is intentional: it enables gradient
+  accumulation over mini-batches when the full batch does not fit in memory.
+
+  However, this behaviour is a common source of bugs. In a standard training loop
+  you should always call optimizer.zero_grad() (or manually zero with
+  tensor.grad.zero_()) before each backward pass. Otherwise gradients from
+  previous iterations bleed into the current update.
+
+  The pattern for a standard training loop is:
+  1. optimizer.zero_grad()
+  2. loss = model(input)
+  3. loss.backward()
+  4. optimizer.step()
+
+learning_objectives:
+  - Explain why PyTorch accumulates gradients by default.
+  - Zero gradients correctly before each backward pass.
+  - Recognise when gradient accumulation is intentional vs. a bug.
+
+interactive_example: examples/gradient_accumulation_example.py
+
+warmup_challenge_id: zero-grad-warmup
+
+common_mistakes:
+  - Forgetting optimizer.zero_grad() in a training loop, causing gradients to grow each iteration.
+  - Zeroing gradients after backward() but before optimizer.step(), which cancels the update.
+
+sources:
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

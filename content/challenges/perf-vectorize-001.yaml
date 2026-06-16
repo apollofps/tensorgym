@@ -1,0 +1,82 @@
+id: perf-vectorize-001
+title: Replace the Python Loop with Tensor Ops
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - vectorization
+concepts_tested:
+  - tensor-operations
+  - performance
+
+required_prerequisites:
+  - tensor-creation
+optional_prerequisites:
+  - broadcasting
+
+concept_capsules:
+  - tensor-creation
+
+prompt: |
+  Implement `add_scalar(x, val)` that adds a scalar `val` to every element of
+  a 2-D tensor `x`. You MUST use tensor operations — no Python loops. Return
+  the result.
+
+starter_code: |
+  import torch
+
+
+  def add_scalar(x: torch.Tensor, val: float) -> torch.Tensor:
+      # Add val to every element of x using tensor operations.
+      # No Python loops allowed.
+      pass
+
+function_name: add_scalar
+
+constraints:
+  - Do not use Python loops (for/while).
+  - Use tensor operations to add the scalar.
+
+visible_tests:
+  - name: basic-add-10
+    description: "Adding 10.0 to [[1,2],[3,4]] gives [[11,12],[13,14]]."
+    kind: exact_allclose
+    input:
+      args: [[[1.0, 2.0], [3.0, 4.0]], 10.0]
+    params:
+      expected: [[11.0, 12.0], [13.0, 14.0]]
+  - name: no-loops
+    description: "No Python for/while loops allowed."
+    kind: no_loops
+
+hidden_test_file: tests/perf_vectorize_001_hidden.py
+
+hints:
+  - level: 0
+    text: PyTorch supports adding a scalar directly to a tensor.
+  - level: 1
+    text: Just use the + operator with the scalar.
+  - level: 2
+    text: "`x + val` broadcasts the scalar to every element."
+  - level: 3
+    text: Broadcasting handles scalar-to-tensor addition automatically.
+  - level: 4
+    text: "return x + val"
+
+solution_file: solutions/perf_vectorize_001.py
+
+estimated_minutes: 5
+
+sources:
+  - pytorch-broadcasting-semantics
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

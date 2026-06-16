@@ -1,0 +1,52 @@
+id: tensor-indexing
+title: Tensor Indexing and Slicing
+estimated_minutes: 5
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  PyTorch tensors support the same indexing and slicing syntax as NumPy arrays.
+
+  Basic indexing uses integers and slices. `x[0]` selects the first row of a
+  2-D tensor. `x[:, 1]` selects the second column. `x[1, 2:5]` selects elements
+  2 through 4 of row 1. Basic indexing returns a view — modifying the result
+  also modifies the original tensor.
+
+  Boolean indexing uses a boolean tensor as a mask. `x[x > 0]` returns a 1-D
+  tensor of all positive elements. The mask must have the same shape as the
+  indexed dimension or the full tensor.
+
+  Fancy (advanced) indexing uses an integer tensor to gather elements at specific
+  positions. `x[torch.tensor([0, 2])]` selects rows 0 and 2. Unlike basic
+  indexing, fancy indexing returns a copy, not a view.
+
+  `torch.diagonal(x)` is a convenient way to extract the diagonal elements of
+  a 2-D tensor, returning a 1-D tensor.
+
+learning_objectives:
+  - Select rows, columns, and sub-tensors with integer and slice indexing.
+  - Filter elements using boolean masks.
+  - Gather specific rows or elements using integer tensor indexing.
+  - Extract the diagonal of a matrix.
+
+interactive_example: examples/tensor_indexing_example.py
+
+warmup_challenge_id: extract-diagonal-warmup
+
+common_mistakes:
+  - Assuming fancy indexing returns a view (it returns a copy).
+  - Using a Python list as a boolean mask instead of a torch.BoolTensor.
+  - Forgetting that negative indices work the same as in Python lists.
+
+sources:
+  - torch-tensor-indexing
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

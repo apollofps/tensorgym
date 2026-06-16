@@ -1,0 +1,44 @@
+# TensorGym source registry
+# Every entry was fetched and read this session. Do not add an entry you have not read.
+# Versions/behavior cross-checked against the pinned env (PyTorch 2.12.0) by the
+# verification suite (tests/test_content_verification.py).
+
+sources:
+  - id: pytorch-broadcasting-semantics
+    title: Broadcasting semantics
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/notes/broadcasting.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    relevant_sections:
+      - "General semantics"
+    supports:
+      - "Dimensions are compared starting from the trailing dimension."
+      - "Two dimensions are compatible when they are equal, one of them is 1, or one does not exist."
+
+  - id: torch-sum
+    title: torch.sum
+    organization: PyTorch
+    url: "https://docs.pytorch.org/docs/2.12/generated/torch.sum.html"
+    source_type: official_documentation
+    documentation_version: "2.12"
+    accessed_at: "2026-06-15"
+    relevant_sections:
+      - "torch.sum(input, dim, keepdim=False, *, dtype=None)"
+    supports:
+      - "Signature is torch.sum(input, dim, keepdim=False, *, dtype=None) -> Tensor."
+      - "With keepdim=True the reduced dimension is retained with size 1."
+      - "With keepdim=False the reduced dimension is removed, producing fewer dimensions."
+
+  - id: pytorch-release-2-12
+    title: PyTorch 2.12.0 Release
+    organization: PyTorch
+    url: "https://github.com/pytorch/pytorch/releases/tag/v2.12.0"
+    source_type: official_release_notes
+    documentation_version: "2.12.0"
+    accessed_at: "2026-06-15"
+    relevant_sections:
+      - "Release tag v2.12.0"
+    supports:
+      - "PyTorch 2.12.0 is the latest stable release (published 2026-05-13, prerelease=false)."

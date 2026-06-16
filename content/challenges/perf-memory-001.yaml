@@ -1,0 +1,83 @@
+id: perf-memory-001
+title: Reduce Memory with In-Place Operations
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - in-place-operations
+concepts_tested:
+  - tensor-operations
+  - memory-efficiency
+
+required_prerequisites:
+  - tensor-creation
+optional_prerequisites: []
+
+concept_capsules:
+  - tensor-creation
+
+prompt: |
+  Implement `inplace_relu(x)` that applies ReLU (clamp negative values to 0)
+  to a tensor IN-PLACE, modifying x directly and returning it. Using in-place
+  operations avoids allocating a new tensor. Use .clamp_(min=0) — the trailing
+  underscore means in-place. Note: don't use this pattern when autograd needs
+  the original values.
+
+starter_code: |
+  import torch
+
+
+  def inplace_relu(x: torch.Tensor) -> torch.Tensor:
+      # Apply ReLU in-place: clamp all negative values to 0.
+      # Return the SAME tensor (modified in-place).
+      pass
+
+function_name: inplace_relu
+
+constraints:
+  - Use an in-place operation (trailing underscore).
+  - Return the same tensor object, not a copy.
+
+visible_tests:
+  - name: basic-relu
+    description: "In-place ReLU on [-1, 2, -3, 4] gives [0, 2, 0, 4]."
+    kind: exact_allclose
+    input: [[-1.0, 2.0, -3.0, 4.0]]
+    params:
+      expected: [[0.0, 2.0, 0.0, 4.0]]
+  - name: keeps-shape
+    description: "Output shape must match input shape."
+    kind: same_shape
+    input: [[-1.0, 2.0, -3.0, 4.0]]
+
+hidden_test_file: tests/perf_memory_001_hidden.py
+
+hints:
+  - level: 0
+    text: "In-place operations in PyTorch end with an underscore (e.g., add_, clamp_)."
+  - level: 1
+    text: ".clamp_(min=0) sets all values below 0 to 0, modifying the tensor directly."
+  - level: 2
+    text: This is more memory-efficient than creating a new tensor with torch.clamp.
+  - level: 3
+    text: "`x.clamp_(min=0)` and then return x."
+  - level: 4
+    text: "return x.clamp_(min=0)"
+
+solution_file: solutions/perf_memory_001.py
+
+estimated_minutes: 6
+
+sources:
+  - torch-tensor-creation
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

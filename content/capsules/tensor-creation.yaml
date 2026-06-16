@@ -1,0 +1,53 @@
+id: tensor-creation
+title: Creating Tensors
+estimated_minutes: 4
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  PyTorch provides several factory functions to create tensors. The most common
+  ones are:
+
+  `torch.tensor(data)` builds a tensor from an existing Python list or NumPy
+  array. The dtype is inferred from the data unless you pass `dtype=` explicitly.
+
+  `torch.zeros(*size)` and `torch.ones(*size)` create tensors filled with zeros
+  or ones. Pass the shape as separate ints or as a tuple: `torch.zeros(3, 4)` and
+  `torch.zeros((3, 4))` both produce a 3x4 zero tensor.
+
+  `torch.rand(*size)` fills a tensor with uniform random values in [0, 1).
+
+  `torch.arange(start, end, step)` works like Python's `range` but returns a
+  1-D float tensor. `torch.linspace(start, end, steps)` is similar but you
+  specify the number of points instead of the step size.
+
+  Every factory function accepts `dtype=` and `device=` keyword arguments. On
+  CPU the default float dtype is `torch.float32`.
+
+learning_objectives:
+  - Create tensors of a specific shape using torch.zeros, torch.ones, and torch.rand.
+  - Build a tensor from a Python list using torch.tensor.
+  - Generate sequences with torch.arange and torch.linspace.
+  - Set the dtype of a tensor at creation time.
+
+interactive_example: examples/tensor_creation_example.py
+
+warmup_challenge_id: create-specific-tensor-warmup
+
+common_mistakes:
+  - Confusing torch.tensor() (lowercase, wraps data) with torch.Tensor() (class constructor, less predictable dtype).
+  - Forgetting that torch.arange excludes the end value, just like Python range.
+  - Passing a Python list to torch.rand instead of shape ints (torch.rand takes *size, not data).
+
+sources:
+  - torch-tensor-creation
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

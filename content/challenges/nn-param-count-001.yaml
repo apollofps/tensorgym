@@ -1,0 +1,78 @@
+id: nn-param-count-001
+title: Count Network Parameters
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - parameter-counting
+concepts_tested:
+  - nn-module
+  - parameters
+
+required_prerequisites:
+  - nn-module-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - nn-module-basics
+
+prompt: |
+  Implement `count_params(in_size, hidden, out_size)` that builds a 3-layer network:
+  Linear(in_size, hidden), ReLU, Linear(hidden, hidden), ReLU, Linear(hidden, out_size)
+  and returns the total number of learnable parameters as a Python int.
+
+  Remember: Linear(a, b) has a*b weight params + b bias params.
+
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def count_params(in_size: int, hidden: int, out_size: int) -> int:
+      pass
+
+function_name: count_params
+
+constraints:
+  - Return a Python int.
+  - Count both weights and biases.
+
+visible_tests:
+  - name: basic-count
+    description: "Linear(4,8)+Linear(8,8)+Linear(8,2) = 40+72+18 = 130 params."
+    kind: expect_value
+    input:
+      args: [4, 8, 2]
+    params:
+      expected: 130
+
+hidden_test_file: tests/nn_param_count_001_hidden.py
+
+hints:
+  - level: 0
+    text: "model.parameters() iterates over all learnable parameters in a module."
+  - level: 1
+    text: "p.numel() gives the number of elements in a parameter tensor."
+  - level: 2
+    text: "sum(p.numel() for p in model.parameters()) counts all learnable parameters."
+  - level: 3
+    text: "model = nn.Sequential(nn.Linear(in_size, hidden), nn.ReLU(), nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, out_size)); return sum(p.numel() for p in model.parameters())"
+
+solution_file: solutions/nn_param_count_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-nn-module
+  - torch-nn-linear
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

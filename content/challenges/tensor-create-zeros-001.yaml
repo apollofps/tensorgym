@@ -1,0 +1,88 @@
+id: tensor-create-zeros-001
+title: Create a Zeros Tensor
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - tensor-factory-functions
+concepts_tested:
+  - tensor-creation
+  - dtype-selection
+
+required_prerequisites:
+  - tensor-creation
+optional_prerequisites: []
+
+concept_capsules:
+  - tensor-creation
+
+prompt: |
+  Implement `make_zeros(shape, dtype_name)` that returns a tensor filled with
+  zeros having the given shape and dtype.
+
+  The `shape` argument is a tuple of ints (e.g. `(3, 4)`). The `dtype_name`
+  argument is a string like `"float64"` or `"int32"` that names a torch dtype.
+
+starter_code: |
+  import torch
+
+
+  def make_zeros(shape, dtype_name: str) -> torch.Tensor:
+      # Return a zeros tensor with the given shape and dtype.
+      # dtype_name is a string like "float64" — look it up on the torch module.
+      # shape may arrive as a tensor from the test runner — convert to tuple if needed.
+      pass
+
+function_name: make_zeros
+
+constraints:
+  - Use torch.zeros to create the tensor.
+  - Convert the dtype_name string to an actual torch dtype using getattr.
+
+visible_tests:
+  - name: shape-3x4-float64
+    description: "A (3, 4) zeros tensor with dtype float64."
+    kind: expect_shape
+    input:
+      args: [[3, 4], "float64"]
+    params:
+      shape: [3, 4]
+  - name: dtype-float64
+    description: "The output dtype must be float64."
+    kind: expect_dtype
+    input:
+      args: [[3, 4], "float64"]
+    params:
+      dtype: float64
+
+hidden_test_file: tests/tensor_create_zeros_001_hidden.py
+
+hints:
+  - level: 0
+    text: torch.zeros takes a shape and an optional dtype keyword argument.
+  - level: 1
+    text: You have a string like "float64". How do you get torch.float64 from it?
+  - level: 2
+    text: Use getattr(torch, dtype_name) to convert the string to a torch dtype.
+  - level: 3
+    text: "torch.zeros(shape, dtype=getattr(torch, dtype_name))"
+  - level: 4
+    text: "return torch.zeros(shape, dtype=getattr(torch, dtype_name))"
+
+solution_file: solutions/tensor_create_zeros_001.py
+
+estimated_minutes: 5
+
+sources:
+  - torch-tensor-creation
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

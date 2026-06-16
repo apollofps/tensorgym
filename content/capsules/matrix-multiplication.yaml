@@ -1,0 +1,51 @@
+id: matrix-multiplication
+title: Matrix Multiplication
+estimated_minutes: 5
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  Matrix multiplication is the backbone of deep learning: every linear layer is a
+  matmul. PyTorch gives you several ways to do it, and the shape rules are strict.
+
+  For two 2-D tensors, torch.matmul(A, B) (or equivalently A @ B) requires the
+  inner dimensions to match: A has shape (N, K) and B has shape (K, M), producing
+  output shape (N, M). torch.mm does the same thing but only accepts exactly 2-D
+  inputs.
+
+  Batched matmul extends this to 3-D. If A has shape (B, N, K) and B has shape
+  (B, K, M), then torch.bmm(A, B) returns shape (B, N, M) - one matrix multiply
+  per batch element. torch.matmul handles batched inputs too, and even broadcasts
+  the batch dimensions, making it the most flexible option.
+
+  The @ operator is syntactic sugar for torch.matmul and is the most Pythonic way
+  to write matrix multiplications.
+
+learning_objectives:
+  - "State the shape rule for 2-D matrix multiplication: (N, K) @ (K, M) -> (N, M)."
+  - "Distinguish between torch.mm (strict 2-D), torch.bmm (strict 3-D), and torch.matmul (flexible)."
+  - Compute the output shape of a batched matmul given input shapes.
+
+interactive_example: examples/matrix_multiplication_example.py
+
+warmup_challenge_id: matmul-shapes-warmup
+
+common_mistakes:
+  - Transposing the wrong matrix when inner dimensions do not match.
+  - Using torch.mm on batched (3-D) inputs instead of torch.bmm or torch.matmul.
+  - Confusing element-wise multiplication (*) with matrix multiplication (@).
+
+sources:
+  - torch-matmul
+  - torch-mm
+  - torch-bmm
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

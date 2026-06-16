@@ -1,0 +1,54 @@
+id: devices
+title: Devices (CPU vs CUDA)
+estimated_minutes: 3
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  Every PyTorch tensor lives on a specific device - usually CPU or a CUDA GPU.
+  You can check where a tensor lives with the .device attribute.
+
+  Tensors on different devices cannot interact: you cannot add a CPU tensor to a
+  GPU tensor. Before any operation, all tensors must be on the same device.
+
+  To move a tensor, use .to(device) where device is a string like 'cpu' or
+  'cuda'. Convenience methods .cpu() and .cuda() are shortcuts. The .to() method
+  also accepts a torch.device object.
+
+  In practice, model training moves both the model and data to GPU for speed, then
+  moves results back to CPU for logging or saving. In this environment we only
+  have CPU available, but understanding devices is essential for real-world
+  PyTorch code.
+
+  Key patterns:
+  - x.device returns the current device (e.g., device(type='cpu'))
+  - x.to('cpu') or x.cpu() moves to CPU
+  - x.to('cuda') or x.cuda() moves to GPU (when available)
+  - torch.tensor([1, 2], device='cpu') creates on a specific device
+
+learning_objectives:
+  - Check which device a tensor is on using .device.
+  - Move a tensor between devices using .to() and .cpu().
+  - Explain why all tensors in an operation must be on the same device.
+
+interactive_example: examples/devices_example.py
+
+warmup_challenge_id: ensure-cpu-warmup
+
+common_mistakes:
+  - Trying to operate on tensors that live on different devices.
+  - Forgetting to move model outputs back to CPU before converting to NumPy.
+  - Calling .cuda() without checking torch.cuda.is_available() first.
+
+sources:
+  - torch-tensor-device
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

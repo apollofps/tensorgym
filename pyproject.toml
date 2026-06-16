@@ -1,0 +1,16 @@
+[project]
+name = "tensorgym"
+version = "0.1.0"
+description = "Challenge-first, documentation-grounded PyTorch learning platform (MVP slice)."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

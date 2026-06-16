@@ -1,0 +1,54 @@
+id: compute-gradient-warmup
+title: "Warm-up: Compute a Basic Gradient"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: autograd-basics
+
+prompt: |
+  Given a 1-D tensor `x`, compute `y = x^2`, take the sum of `y`, call
+  backward, and return `x.grad`. You will need to clone `x` with
+  requires_grad enabled first, since the input tensor does not track gradients.
+
+starter_code: |
+  import torch
+
+
+  def compute_grad(x: torch.Tensor) -> torch.Tensor:
+      # x is a 1-D float32 tensor. Clone it with requires_grad=True,
+      # compute y = x^2, call backward on y.sum(), and return the gradient.
+      pass
+
+function_name: compute_grad
+
+constraints:
+  - Do not use Python loops.
+  - You must clone x and enable requires_grad before computing.
+
+visible_tests:
+  - name: values-correct
+    description: "Gradient of x^2 at [2.0, 3.0] is 2*x = [4.0, 6.0]."
+    kind: exact_allclose
+    input: [2.0, 3.0]
+    params:
+      expected: [4.0, 6.0]
+  - name: shape-is-correct
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input: [2.0, 3.0]
+    params:
+      shape: [2]
+
+solution_inline: |
+  x = x.clone().requires_grad_(True)
+  y = x ** 2
+  y.sum().backward()
+  return x.grad
+
+sources:
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

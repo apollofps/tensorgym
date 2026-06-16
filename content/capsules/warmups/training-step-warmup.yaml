@@ -1,0 +1,47 @@
+id: training-step-warmup
+title: "Warm-up: One Training Step"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+parent_capsule: training-loop-basics
+prompt: |
+  Given a model, optimizer, input `x`, and target `y`, perform one training step.
+  The function receives all four as arguments. Execute the correct sequence:
+  zero_grad → forward → loss (MSELoss) → backward → step. Return the loss value
+  as a Python float. Use torch.manual_seed(42) at the start.
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def one_step(model: nn.Module, optimizer: torch.optim.Optimizer,
+               x: torch.Tensor, y: torch.Tensor) -> float:
+      # Perform one training step: zero_grad, forward, loss, backward, step.
+      # Return the loss as a float.
+      pass
+function_name: one_step
+constraints:
+  - Must call zero_grad before backward.
+  - Must return loss as a Python float.
+visible_tests:
+  - name: runs-without-error
+    description: "The function should execute a training step without errors."
+    kind: runs_without_error
+    input:
+      args: [[[1.0, 2.0], [3.0, 4.0]], [[1.0], [2.0]]]
+    params:
+      input_dtype: "float32"
+solution_inline: |
+  torch.manual_seed(42)
+  optimizer.zero_grad()
+  pred = model(x)
+  loss = nn.MSELoss()(pred, y)
+  loss.backward()
+  optimizer.step()
+  return loss.item()
+sources:
+  - torch-nn-mseloss
+  - torch-optim-sgd
+verification:
+  status: verified
+  verified_at: "2026-06-16"

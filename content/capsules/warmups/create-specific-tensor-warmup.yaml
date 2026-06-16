@@ -1,0 +1,48 @@
+id: create-specific-tensor-warmup
+title: "Warm-up: Create a Ones Tensor"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: tensor-creation
+
+prompt: |
+  Return a 3x4 tensor of ones with dtype float32.
+
+starter_code: |
+  import torch
+
+
+  def create_ones() -> torch.Tensor:
+      # Return a 3x4 tensor filled with ones, dtype=torch.float32.
+      pass
+
+function_name: create_ones
+
+constraints:
+  - Output must have shape (3, 4).
+  - Output dtype must be torch.float32.
+
+visible_tests:
+  - name: shape-is-3-by-4
+    description: "The result must have shape (3, 4)."
+    kind: expect_shape
+    input: null
+    params:
+      shape: [3, 4]
+  - name: dtype-is-float32
+    description: "The result must have dtype float32."
+    kind: expect_dtype
+    input: null
+    params:
+      dtype: float32
+
+solution_inline: |
+  return torch.ones(3, 4, dtype=torch.float32)
+
+sources:
+  - torch-tensor-creation
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

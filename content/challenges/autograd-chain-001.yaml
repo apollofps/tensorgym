@@ -1,0 +1,82 @@
+id: autograd-chain-001
+title: Gradient of sin(x²)
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - chain-rule-gradient
+concepts_tested:
+  - autograd
+  - chain-rule
+
+required_prerequisites:
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - autograd-basics
+
+prompt: |
+  Implement `sin_x2_grad(x)` that computes the gradient of f(x) = sin(x²).
+
+  Clone x with requires_grad, compute sin(x**2), backward on sum, return grad.
+  The analytical derivative is 2x·cos(x²).
+
+starter_code: |
+  import torch
+
+
+  def sin_x2_grad(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: sin_x2_grad
+
+constraints:
+  - Use autograd (backward) rather than computing the analytical formula directly.
+
+visible_tests:
+  - name: basic-values
+    description: "Gradient at [0.0, 1.0] should be [0.0, ~1.0806]."
+    kind: exact_allclose
+    input:
+      args: [[0.0, 1.0]]
+    params:
+      expected: [0.0, 1.0806]
+  - name: output-shape
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input:
+      args: [[0.0, 1.0]]
+    params:
+      shape: [2]
+
+hidden_test_file: tests/autograd_chain_001_hidden.py
+
+hints:
+  - level: 0
+    text: "The chain rule says d/dx sin(x²) = cos(x²) · 2x."
+  - level: 1
+    text: "Use torch.sin(x**2) to compute the forward pass."
+  - level: 2
+    text: "Clone x, set requires_grad_(True), compute sin(x**2).sum(), call backward."
+  - level: 3
+    text: "x = x.clone().requires_grad_(True); y = torch.sin(x**2).sum(); y.backward(); return x.grad"
+
+solution_file: solutions/autograd_chain_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-autograd
+  - torch-backward
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

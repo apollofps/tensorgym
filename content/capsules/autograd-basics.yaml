@@ -1,0 +1,49 @@
+id: autograd-basics
+title: Autograd Basics
+estimated_minutes: 5
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  PyTorch builds a computation graph dynamically as you operate on tensors that
+  have requires_grad=True. Every operation records what produced it, creating a
+  directed acyclic graph of operations. When you call .backward() on a scalar
+  result, PyTorch walks this graph in reverse (reverse-mode automatic
+  differentiation) and fills in the .grad attribute for each leaf tensor.
+
+  A leaf tensor is one that was created directly by the user, not produced by an
+  operation. For example, `x = torch.tensor([1.0], requires_grad=True)` is a
+  leaf, but `y = x * 2` is not. Only leaf tensors accumulate gradients in .grad.
+
+  The graph is freed after backward() unless you pass retain_graph=True. Also,
+  .grad accumulates across multiple backward() calls unless you explicitly zero
+  it. This accumulation behaviour is intentional but a common source of bugs in
+  training loops.
+
+learning_objectives:
+  - Create a tensor with requires_grad=True.
+  - Compute a function of that tensor and call .backward() on a scalar result.
+  - Read the computed gradient from the .grad attribute.
+  - Distinguish leaf tensors from intermediate tensors.
+
+interactive_example: examples/autograd_basics_example.py
+
+warmup_challenge_id: compute-gradient-warmup
+
+common_mistakes:
+  - Calling backward() on a non-scalar without passing a gradient argument.
+  - Expecting .grad on a non-leaf tensor (it is None by default).
+  - Forgetting that .grad accumulates across backward() calls.
+
+sources:
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

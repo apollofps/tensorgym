@@ -1,0 +1,91 @@
+id: debug-inplace-error-001
+title: Fix the In-Place Operation Error
+type: debugging
+difficulty: medium
+
+concepts_taught:
+  - debugging-inplace-autograd
+concepts_tested:
+  - autograd
+  - inplace-operations
+
+required_prerequisites:
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - autograd-basics
+
+prompt: |
+  The code below fails because it performs an in-place operation on a leaf
+  tensor that requires gradients. Fix `fix_inplace(x)` so it adds 1 to each
+  element without using in-place operations, and returns the gradient of the
+  result squared.
+
+  The bug: `x.add_(1)` modifies a leaf tensor in-place, which autograd
+  doesn't allow.
+
+starter_code: |
+  import torch
+
+
+  def fix_inplace(x: torch.Tensor) -> torch.Tensor:
+      # BUG: add_ is in-place, can't be used on a leaf with requires_grad
+      x = x.clone().requires_grad_(True)
+      x.add_(1)
+      y = (x ** 2).sum()
+      y.backward()
+      return x.grad
+
+function_name: fix_inplace
+
+constraints:
+  - Do not use any in-place operations on tensors that require gradients.
+
+visible_tests:
+  - name: basic-inplace-fix
+    description: "Gradient of (x+1)² at [1.0, 2.0] is [4.0, 6.0]."
+    kind: exact_allclose
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      expected: [4.0, 6.0]
+  - name: output-shape
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      shape: [2]
+
+hidden_test_file: tests/debug_inplace_error_001_hidden.py
+
+hints:
+  - level: 0
+    text: "In-place operations (like add_) on leaf tensors with requires_grad are forbidden."
+  - level: 1
+    text: "Replace the in-place add_ with a regular out-of-place addition."
+  - level: 2
+    text: "Use z = x + 1 instead of x.add_(1)."
+  - level: 3
+    text: "The gradient of (x+1)² with respect to x is 2(x+1)."
+  - level: 4
+    text: "Replace x.add_(1) with z = x + 1 and use z for the rest."
+
+solution_file: solutions/debug_inplace_error_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-autograd
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

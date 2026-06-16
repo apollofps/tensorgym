@@ -1,0 +1,42 @@
+id: count-elements-warmup
+title: "Warm-up: Count Tensor Elements"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: tensor-shapes
+
+prompt: |
+  Return the number of elements in the tensor as a Python int.
+
+starter_code: |
+  import torch
+
+
+  def count_elements(x: torch.Tensor) -> int:
+      # Return the total number of elements in x as a Python int.
+      pass
+
+function_name: count_elements
+
+constraints:
+  - Return a Python int, not a tensor.
+  - Do not use Python loops.
+
+visible_tests:
+  - name: count-3x4
+    description: "A (3, 4) tensor has 12 elements."
+    kind: expect_value
+    input: [[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0], [9.0, 10.0, 11.0, 12.0]]
+    params:
+      expected: 12
+
+solution_inline: |
+  return x.numel()
+
+sources:
+  - torch-tensor-shapes
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"

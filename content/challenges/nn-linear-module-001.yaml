@@ -1,0 +1,84 @@
+id: nn-linear-module-001
+title: Build a Two-Layer Network
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - nn-module-construction
+concepts_tested:
+  - nn-module
+  - nn-linear
+
+required_prerequisites:
+  - nn-module-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - nn-module-basics
+
+prompt: |
+  Implement `two_layer_forward(x)` that builds a 2-layer neural network and runs
+  a forward pass.
+
+  The network should have: Linear(4, 8), ReLU, Linear(8, 2).
+
+  Use `torch.manual_seed(42)` before creating the model for reproducibility.
+  Return the output of the forward pass.
+
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def two_layer_forward(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: two_layer_forward
+
+constraints:
+  - Use torch.manual_seed(42) before creating the model.
+  - Use nn.Sequential or equivalent composition.
+
+visible_tests:
+  - name: output-shape
+    description: "Output should have shape [2, 2] for a (2, 4) input."
+    kind: expect_shape
+    input: [[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]]
+    params:
+      shape: [2, 2]
+  - name: output-is-tensor
+    description: "Output must be a tensor."
+    kind: output_is_tensor
+    input: [[1.0, 2.0, 3.0, 4.0]]
+
+hidden_test_file: tests/nn_linear_module_001_hidden.py
+
+hints:
+  - level: 0
+    text: "nn.Sequential lets you chain layers together in order."
+  - level: 1
+    text: "Use nn.Linear(4, 8) as the first layer and nn.ReLU() between layers."
+  - level: 2
+    text: "model = nn.Sequential(nn.Linear(4, 8), nn.ReLU(), nn.Linear(8, 2))"
+  - level: 3
+    text: "torch.manual_seed(42); model = nn.Sequential(nn.Linear(4, 8), nn.ReLU(), nn.Linear(8, 2)); return model(x)"
+
+solution_file: solutions/nn_linear_module_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-nn-module
+  - torch-nn-linear
+  - torch-nn-relu
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

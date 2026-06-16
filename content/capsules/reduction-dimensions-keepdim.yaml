@@ -1,0 +1,48 @@
+id: reduction-dimensions-keepdim
+title: Reduction Dimensions and keepdim
+estimated_minutes: 4
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  A reduction collapses a tensor along one or more dimensions. For a 2-D tensor
+  of shape (N, M), think of dim=0 as "down the columns" and dim=1 as "across each
+  row". Reducing along dim=1 therefore produces one number per row.
+
+  By default a reduction removes the dimension it reduced. So `x.sum(dim=1)` on an
+  (N, M) tensor returns shape (N,) - the row dimension is gone. That is a problem
+  when you want to use the result back on the original tensor, because a (N,)
+  vector does not line up with an (N, M) matrix.
+
+  Passing `keepdim=True` keeps the reduced dimension with size 1. So
+  `x.sum(dim=1, keepdim=True)` returns shape (N, 1). Now the result broadcasts
+  cleanly against (N, M): broadcasting compares shapes from the trailing
+  dimension, and a dimension of size 1 stretches to match. This is exactly what
+  you need to divide every row by its own sum.
+
+learning_objectives:
+  - Choose the correct dimension to reduce for a per-row result.
+  - Explain how keepdim changes the output shape from (N,) to (N, 1).
+  - Predict whether a reduced result will broadcast against the original tensor.
+
+interactive_example: examples/reduction_keepdim_example.py
+
+warmup_challenge_id: row-sums-keepdim-warmup
+
+common_mistakes:
+  - Reducing along dim=0 when you wanted a per-row result (that gives per-column).
+  - Forgetting keepdim=True, leaving shape (N,) which fails to broadcast against (N, M).
+
+sources:
+  - torch-sum
+  - pytorch-broadcasting-semantics
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

@@ -1,0 +1,49 @@
+id: tensor-shapes
+title: Understanding Tensor Shapes
+estimated_minutes: 4
+
+supported_pytorch_version: "2.12.0"
+
+summary: |
+  Every tensor has a shape that tells you how many elements it has along each
+  dimension. A tensor with shape (3, 4) has 3 rows and 4 columns, for a total of
+  12 elements.
+
+  Access the shape with `.shape` or `.size()` — they return the same `torch.Size`
+  object. The number of dimensions (also called rank or order) is `.ndim`. A
+  scalar tensor has ndim=0, a vector ndim=1, a matrix ndim=2, and so on.
+
+  The total element count is `.numel()`. For a tensor of shape (3, 4), `numel()`
+  returns 12 because 3 * 4 = 12. This is useful for reshaping, where the product
+  of the new shape must equal `numel()`.
+
+  Understanding shapes is fundamental: nearly every PyTorch operation depends on
+  knowing the shape of your tensors and how shapes interact through broadcasting,
+  reduction, and reshaping.
+
+learning_objectives:
+  - Read the shape and rank of any tensor using .shape and .ndim.
+  - Calculate the total number of elements with .numel().
+  - Explain the difference between shape and numel.
+
+interactive_example: examples/tensor_shapes_example.py
+
+warmup_challenge_id: count-elements-warmup
+
+common_mistakes:
+  - Confusing .shape (returns a torch.Size tuple) with .numel() (returns a single int).
+  - Forgetting that a scalar tensor (e.g. torch.tensor(5)) has shape () and ndim 0, not shape (1,).
+  - Treating .shape as a plain Python tuple — it is a torch.Size, which is a subclass of tuple.
+
+sources:
+  - torch-tensor-shapes
+
+verification:
+  status: verified
+  verified_at: "2026-06-15"
+
+review_status:
+  last_reviewed_at: "2026-06-15"
+  review_due_at: "2026-12-15"
+  supported_pytorch_version: "2.12.0"
+  stale: false

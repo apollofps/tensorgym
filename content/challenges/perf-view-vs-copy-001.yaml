@@ -1,0 +1,84 @@
+id: perf-view-vs-copy-001
+title: Return a View Instead of a Copy
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - view-vs-copy
+concepts_tested:
+  - tensor-reshaping
+  - memory-efficiency
+
+required_prerequisites:
+  - tensor-reshaping
+optional_prerequisites: []
+
+concept_capsules:
+  - tensor-reshaping
+
+prompt: |
+  Implement `flatten_view(x)` that returns a 1-D view of a 2-D tensor `x`.
+  The result must share memory with `x` (be a view, not a copy). Use `.view()`
+  or `.reshape()` on contiguous tensors. The output should have shape (N*M,)
+  for input shape (N, M).
+
+starter_code: |
+  import torch
+
+
+  def flatten_view(x: torch.Tensor) -> torch.Tensor:
+      # Return a 1-D VIEW of x (not a copy).
+      # For input shape (N, M), output shape should be (N*M,).
+      pass
+
+function_name: flatten_view
+
+constraints:
+  - The returned tensor must be a view (share storage with x).
+  - Use .view() or .reshape() — do not allocate a new tensor.
+
+visible_tests:
+  - name: values-correct
+    description: "Flattening [[1,2,3],[4,5,6]] gives [1,2,3,4,5,6]."
+    kind: exact_allclose
+    input: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+    params:
+      expected: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+  - name: shape-1d
+    description: "Output shape must be (6,) for a 2x3 input."
+    kind: expect_shape
+    input: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+    params:
+      shape: [6]
+
+hidden_test_file: tests/perf_view_vs_copy_001_hidden.py
+
+hints:
+  - level: 0
+    text: A view shares the same underlying data as the original tensor.
+  - level: 1
+    text: Use .view(-1) to flatten to 1-D.
+  - level: 2
+    text: .view(-1) infers the correct size for the single dimension.
+  - level: 3
+    text: .reshape(-1) also works and handles non-contiguous tensors.
+  - level: 4
+    text: "return x.view(-1)"
+
+solution_file: solutions/perf_view_vs_copy_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-reshape
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

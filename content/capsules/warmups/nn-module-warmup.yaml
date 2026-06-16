@@ -1,0 +1,64 @@
+id: nn-module-warmup
+title: "Warm-up: Build a Single Linear Layer Module"
+type: implementation
+difficulty: trivial
+estimated_minutes: 2
+
+parent_capsule: nn-module-basics
+
+prompt: |
+  Build a simple nn.Module subclass with one `nn.Linear(2, 3)` layer. Its
+  forward method should just apply that layer to the input. Then write a
+  function `build_and_run` that creates the model and runs a forward pass.
+
+  Use `torch.manual_seed(42)` inside your function before creating the model
+  so the weights are reproducible. The function receives `x`, a 2-D tensor of
+  shape (N, 2), and returns the output of the forward pass.
+
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def build_and_run(x: torch.Tensor) -> torch.Tensor:
+      # Build an nn.Module with one nn.Linear(2, 3) and return model(x).
+      pass
+
+function_name: build_and_run
+
+constraints:
+  - Must define and use an nn.Module subclass with nn.Linear(2, 3).
+  - Must call torch.manual_seed(42) before creating the model.
+
+visible_tests:
+  - name: shape-correct
+    description: "For a (2, 2) input the output must have shape (2, 3)."
+    kind: expect_shape
+    input: [[1.0, 2.0], [3.0, 4.0]]
+    params:
+      shape: [2, 3]
+  - name: output-is-tensor
+    description: "The returned value must be a torch.Tensor."
+    kind: output_is_tensor
+    input: [[1.0, 2.0], [3.0, 4.0]]
+
+solution_inline: |
+  class SingleLinear(nn.Module):
+      def __init__(self):
+          super().__init__()
+          self.linear = nn.Linear(2, 3)
+
+      def forward(self, x):
+          return self.linear(x)
+
+  torch.manual_seed(42)
+  model = SingleLinear()
+  return model(x)
+
+sources:
+  - torch-nn-module
+  - torch-nn-linear
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"

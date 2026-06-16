@@ -1,0 +1,14 @@
+"""Reference solution for tensor-stack-batch-001.
+
+Verified in the pinned environment (PyTorch 2.12.0, CPU) by
+tests/test_content_verification.py. Do not reveal this to the learner before
+hint level 4.
+"""
+
+import torch
+
+
+def stack_batch(
+    a: torch.Tensor, b: torch.Tensor, c: torch.Tensor,
+) -> torch.Tensor:
+    return torch.stack([a, b, c], dim=0)

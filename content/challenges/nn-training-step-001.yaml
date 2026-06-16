@@ -1,0 +1,80 @@
+id: nn-training-step-001
+title: One Optimizer Step
+type: implementation
+difficulty: medium
+
+concepts_taught:
+  - training-step
+concepts_tested:
+  - training-loop
+  - optimizer
+
+required_prerequisites:
+  - training-loop-basics
+  - nn-module-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - training-loop-basics
+
+prompt: |
+  Implement `train_one_step(x, y)` that creates a Linear(3, 1) model, an MSELoss,
+  and an SGD optimizer (lr=0.01), then performs one training step:
+  zero_grad → forward → loss → backward → step.
+
+  Return the loss as a Python float.
+  Use `torch.manual_seed(42)` before creating the model.
+
+starter_code: |
+  import torch
+  import torch.nn as nn
+
+
+  def train_one_step(x: torch.Tensor, y: torch.Tensor) -> float:
+      pass
+
+function_name: train_one_step
+
+constraints:
+  - Use torch.manual_seed(42) before creating the model.
+  - Use nn.MSELoss and torch.optim.SGD with lr=0.01.
+  - Return a Python float (use loss.item()).
+
+visible_tests:
+  - name: runs-without-error
+    description: "Should complete one training step without error."
+    kind: runs_without_error
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], [[1.0], [2.0]]]
+
+hidden_test_file: tests/nn_training_step_001_hidden.py
+
+hints:
+  - level: 0
+    text: "A training step has five parts: zero gradients, forward pass, compute loss, backward, optimizer step."
+  - level: 1
+    text: "Use torch.optim.SGD(model.parameters(), lr=0.01) to create the optimizer."
+  - level: 2
+    text: "optimizer.zero_grad(); pred = model(x); loss = criterion(pred, y); loss.backward(); optimizer.step()"
+  - level: 3
+    text: "torch.manual_seed(42); model = nn.Linear(3, 1); criterion = nn.MSELoss(); optimizer = torch.optim.SGD(model.parameters(), lr=0.01); optimizer.zero_grad(); pred = model(x); loss = criterion(pred, y); loss.backward(); optimizer.step(); return loss.item()"
+
+solution_file: solutions/nn_training_step_001.py
+
+estimated_minutes: 10
+
+sources:
+  - torch-nn-mseloss
+  - torch-optim-sgd
+  - torch-nn-module
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

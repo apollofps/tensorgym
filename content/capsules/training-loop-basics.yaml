@@ -1,0 +1,53 @@
+id: training-loop-basics
+title: Training Loop Basics
+estimated_minutes: 5
+supported_pytorch_version: "2.12.0"
+summary: |
+  A training loop in PyTorch follows a fixed rhythm: zero_grad, forward, loss,
+  backward, step. Understanding each phase is essential for debugging and writing
+  correct training code.
+
+  First, optimizer.zero_grad() clears old gradients so they do not accumulate
+  from previous iterations. Next, you run the forward pass by feeding input
+  through your model to produce predictions. Then you compute the loss, which
+  measures how far predictions are from targets — MSELoss is common for
+  regression, CrossEntropyLoss for classification.
+
+  After computing the loss, loss.backward() walks the computation graph in
+  reverse and fills the .grad attribute of every parameter. Finally,
+  optimizer.step() updates each parameter based on its gradient and the
+  optimizer's rule (SGD subtracts lr * grad).
+
+  Skipping zero_grad causes gradients to accumulate across batches, producing
+  incorrect updates. Calling step before backward uses stale (or zero) gradients.
+  The order matters: zero_grad → forward → loss → backward → step.
+
+learning_objectives:
+  - Explain the purpose of each step in the training loop.
+  - Write a single training step with zero_grad, forward, loss, backward, step.
+  - Use MSELoss for a regression loss function.
+  - Use SGD as a basic optimizer.
+
+interactive_example: examples/training_loop_basics_example.py
+
+warmup_challenge_id: training-step-warmup
+
+common_mistakes:
+  - Forgetting zero_grad, causing gradients to accumulate across batches.
+  - Calling optimizer.step() before loss.backward().
+  - Computing loss on wrong shapes (e.g. (N, 1) vs (N,) mismatch).
+
+sources:
+  - torch-nn-mseloss
+  - torch-optim-sgd
+  - torch-nn-module
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

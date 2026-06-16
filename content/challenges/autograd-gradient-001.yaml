@@ -1,0 +1,83 @@
+id: autograd-gradient-001
+title: Gradient of a Polynomial
+type: implementation
+difficulty: easy
+
+concepts_taught:
+  - basic-gradient-computation
+concepts_tested:
+  - autograd
+  - requires-grad
+
+required_prerequisites:
+  - autograd-basics
+optional_prerequisites: []
+
+concept_capsules:
+  - autograd-basics
+
+prompt: |
+  Implement `poly_grad(x)` that computes the gradient of f(x) = x³ + 2x at each
+  element of `x`.
+
+  Clone `x` with `requires_grad_(True)`, compute f(x), call backward on the sum,
+  and return the gradient. The analytical derivative is 3x² + 2.
+
+starter_code: |
+  import torch
+
+
+  def poly_grad(x: torch.Tensor) -> torch.Tensor:
+      pass
+
+function_name: poly_grad
+
+constraints:
+  - Use autograd (backward) rather than computing the analytical formula directly.
+
+visible_tests:
+  - name: basic-values
+    description: "Gradient at [1.0, 2.0] should be [5.0, 14.0]."
+    kind: exact_allclose
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      expected: [5.0, 14.0]
+  - name: output-shape
+    description: "Output shape must match input shape."
+    kind: expect_shape
+    input:
+      args: [[1.0, 2.0]]
+    params:
+      shape: [2]
+
+hidden_test_file: tests/autograd_gradient_001_hidden.py
+
+hints:
+  - level: 0
+    text: "requires_grad_(True) tells PyTorch to track operations on that tensor."
+  - level: 1
+    text: "After computing f(x), call .sum().backward() to get per-element gradients."
+  - level: 2
+    text: "Clone x first so you don't modify the input, then set requires_grad_(True)."
+  - level: 3
+    text: "x = x.clone().requires_grad_(True); y = (x**3 + 2*x).sum(); y.backward(); return x.grad"
+
+solution_file: solutions/autograd_gradient_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-autograd
+  - torch-backward
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false

@@ -1,0 +1,89 @@
+id: debug-shape-mismatch-001
+title: Fix the Matmul Shape Mismatch
+type: debugging
+difficulty: easy
+
+concepts_taught:
+  - debugging-shape-errors
+concepts_tested:
+  - matrix-multiplication
+  - tensor-shapes
+
+required_prerequisites:
+  - matrix-multiplication
+  - tensor-shapes
+optional_prerequisites: []
+
+concept_capsules:
+  - matrix-multiplication
+
+prompt: |
+  The code below tries to multiply two matrices, but it crashes with a shape
+  mismatch error. Fix the code so that `fix_matmul(a, b)` returns the matrix
+  product.
+
+  The intended computation is a @ b, but b needs to be transposed first.
+  a has shape (2, 3) and b has shape (2, 3) — they can't be multiplied as-is
+  because the inner dimensions don't match.
+
+starter_code: |
+  import torch
+
+
+  def fix_matmul(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
+      # BUG: a is (2,3) and b is (2,3) — inner dims don't match for matmul
+      return a @ b
+
+function_name: fix_matmul
+
+constraints:
+  - The fix must use transposition so that b becomes (3, 2) before multiplying.
+
+visible_tests:
+  - name: basic-matmul
+    description: "a @ b.T for identical (2,3) matrices."
+    kind: exact_allclose
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]]
+    params:
+      expected: [[14.0, 32.0], [32.0, 77.0]]
+  - name: output-shape
+    description: "Result of (2,3) @ (3,2) must be (2,2)."
+    kind: expect_shape
+    input:
+      args: [[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]]
+    params:
+      shape: [2, 2]
+
+hidden_test_file: tests/debug_shape_mismatch_001_hidden.py
+
+hints:
+  - level: 0
+    text: "Look at the shapes of a and b — what must the inner dimensions be for matmul?"
+  - level: 1
+    text: "a is (2,3) and b is (2,3). For a @ b, you need b's first dim to be 3."
+  - level: 2
+    text: "Transpose b so it becomes (3,2). Then a (2,3) @ b.T (3,2) = (2,2)."
+  - level: 3
+    text: "Use b.T or b.transpose(0, 1) to transpose b."
+  - level: 4
+    text: "return a @ b.T"
+
+solution_file: solutions/debug_shape_mismatch_001.py
+
+estimated_minutes: 8
+
+sources:
+  - torch-matmul
+  - torch-transpose
+
+verification:
+  status: verified
+  verified_at: "2026-06-16"
+  environment_id: pytorch-mvp-2.12.0-cpu
+
+review_status:
+  last_reviewed_at: "2026-06-16"
+  review_due_at: "2026-12-16"
+  supported_pytorch_version: "2.12.0"
+  stale: false
