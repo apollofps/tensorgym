@@ -13,7 +13,6 @@
   <img src="https://img.shields.io/badge/PyTorch-2.12.0-ee4c2c?logo=pytorch&logoColor=fff" alt="PyTorch 2.12.0" />
   <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=fff" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Docker-sandboxed-2496ed?logo=docker&logoColor=fff" alt="Docker" />
-  <img src="https://img.shields.io/badge/tests-19%20passing-5db870" alt="Tests" />
   <img src="https://img.shields.io/badge/challenges-30-6e9eff" alt="30 Challenges" />
   <img src="https://img.shields.io/github/license/apollofps/tensorgym" alt="License" />
 </p>
